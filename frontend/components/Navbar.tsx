@@ -37,6 +37,18 @@ export default function Navbar() {
           Chat
         </Link>
 
+        <Link href="/goals">
+          Goals
+        </Link>
+
+        <Link href="/board">
+          Board
+        </Link>
+
+        <Link href="/habits">
+          Habits
+        </Link>
+
         <button
           onClick={logout}
           className="ml-auto border rounded px-3 py-1"

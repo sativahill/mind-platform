@@ -32,6 +32,9 @@ INSTALLED_APPS = [
     "daily_logs",
     "wins",
     "ai_chat",
+    "goals",
+    "board",
+    "habits",
 ]
 
 

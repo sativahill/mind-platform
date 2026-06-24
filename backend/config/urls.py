@@ -31,7 +31,15 @@ urlpatterns = [
 
     path('api/home/', include("home.urls")),
 
+    path('api/goals/', include("goals.urls")),
+
+    path('api/board/', include("board.urls")),
+
+    path('api/habits/', include("habits.urls")),
+
     path('api/register/', include("users.urls")),
+    
+    
 
     
 ]
