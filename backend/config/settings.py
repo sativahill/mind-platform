@@ -35,6 +35,11 @@ INSTALLED_APPS = [
     "goals",
     "board",
     "habits",
+    "library",
+    "finance",
+    "analytics",
+    "notifications",
+    "progress_photos",
 ]
 
 
