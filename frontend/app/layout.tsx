@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-
+import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-serif",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "PROJECT",
-  description: "Personal AI Platform",
+  description: "Your second brain.",
 };
 
 export default function RootLayout({
@@ -24,11 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full">
+    <html lang="en">
+      <body
+        className={`${inter.variable} ${cormorant.variable} antialiased`}
+      >
         {children}
       </body>
     </html>

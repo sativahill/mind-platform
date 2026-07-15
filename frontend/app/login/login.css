@@ -1,0 +1,356 @@
+/* ==========================================================
+   LOGIN
+========================================================== */
+
+.login-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    background: #0d0d0f;
+}
+
+/* ==========================================================
+   BACKGROUND
+========================================================== */
+
+.login-background {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+}
+
+.login-background::before {
+    content: "";
+
+    position: absolute;
+    inset: -20%;
+
+    background:
+        radial-gradient(circle at 50% 35%,
+            rgba(255,255,255,.03),
+            transparent 60%);
+
+    animation: backgroundMove 45s ease-in-out infinite alternate;
+
+    will-change: transform;
+
+    transform: translate3d(0,0,0);
+}
+
+.login-background::after {
+
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    opacity:.02;
+
+    background-image:
+        radial-gradient(circle,#fff 1px,transparent 1px);
+
+    background-size:24px 24px;
+
+}
+
+.login-vignette{
+
+    position:absolute;
+    inset:0;
+
+    background:
+        radial-gradient(circle,
+            transparent 30%,
+            rgba(0,0,0,.22));
+
+    z-index:-1;
+
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.login-header{
+
+    position:absolute;
+
+    left:48px;
+    top:42px;
+
+}
+
+.login-logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    text-decoration:none;
+
+}
+
+.login-circle{
+
+    width:14px;
+    height:14px;
+
+    border-radius:50%;
+
+    border:1.5px solid rgba(255,255,255,.55);
+
+    transition:.3s;
+
+}
+
+.login-text{
+
+    font-family:var(--font-inter);
+
+    letter-spacing:.32em;
+
+    font-size:15px;
+
+    color:#909098;
+
+    transition:.3s;
+
+}
+
+.login-logo:hover .login-circle{
+
+    transform:scale(1.15);
+
+    border-color:white;
+
+}
+
+.login-logo:hover .login-text{
+
+    color:white;
+
+}
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+
+.login-content{
+
+    width:100%;
+    max-width:470px;
+
+    padding-inline:36px;
+
+    animation:fadeUp .55s ease;
+
+}
+
+.login-title{
+
+    font-family:var(--font-inter);
+
+    font-size:54px;
+
+    font-weight:500;
+
+    color:#f3eee8;
+
+    letter-spacing:-.04em;
+
+}
+
+.login-description{
+
+    margin-top:14px;
+
+    font-family:var(--font-inter);
+
+    color:#707078;
+
+    line-height:1.8;
+
+}
+
+/* ==========================================================
+   FORM
+========================================================== */
+
+.login-form{
+
+    margin-top:56px;
+
+}
+
+.input-group{
+
+    margin-bottom:34px;
+
+}
+
+.input{
+
+    width:100%;
+
+    padding:0 0 16px;
+
+    background:none;
+
+    border:none;
+
+    border-bottom:1px solid #2d2d33;
+
+    outline:none;
+
+    color:#f3eee8;
+
+    font-size:17px;
+
+    font-family:var(--font-inter);
+
+    transition:
+        border-color .25s ease,
+        color .25s ease;
+
+}
+
+.input::placeholder{
+
+    color:#73737b;
+
+}
+
+.input:focus{
+
+    border-bottom-color:#8268f2;
+
+}
+
+/* ==========================================================
+   BUTTON
+========================================================== */
+
+.login-button{
+
+    width:100%;
+
+    height:58px;
+
+    margin-top:10px;
+
+    border:none;
+
+    border-radius:999px;
+
+    background:#8268f2;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:500;
+
+    font-family:var(--font-inter);
+
+    cursor:pointer;
+
+    transition:
+        transform .28s cubic-bezier(.22,1,.36,1),
+        box-shadow .28s cubic-bezier(.22,1,.36,1),
+        background .28s;
+
+}
+
+.login-button:hover{
+
+    transform:translateY(-2px) scale(1.02);
+
+    background:#8b72f5;
+
+    box-shadow:0 18px 44px rgba(130,104,242,.18);
+
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.login-footer{
+
+    margin-top:32px;
+
+    text-align:center;
+
+    font-family:var(--font-inter);
+
+    color:#777780;
+
+}
+
+.login-footer a{
+
+    text-decoration:none;
+
+    color:#bfbfc8;
+
+    transition:.25s;
+
+}
+
+.login-footer a:hover{
+
+    color:white;
+
+}
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(10px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes backgroundMove{
+
+    0%{
+
+        transform:translate3d(0,0,0) scale(1);
+
+    }
+
+    50%{
+
+        transform:translate3d(0,-10px,0) scale(1.02);
+
+    }
+
+    100%{
+
+        transform:translate3d(0,0,0) scale(1);
+
+    }
+
+}

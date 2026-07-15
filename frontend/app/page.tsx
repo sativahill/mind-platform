@@ -1,33 +1,92 @@
 import Link from "next/link";
+import "./landing.css";
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-black text-white flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-6xl font-bold mb-4">
-          PROJECT
-        </h1>
+    <main className="landing">
 
-        <p className="text-zinc-400 text-lg mb-8">
-          Personal AI Platform
-        </p>
+      {/* Background */}
 
-        <div className="flex gap-4 justify-center">
-          <Link
-            href="/login"
-            className="border rounded px-6 py-3"
-          >
-            Login
-          </Link>
+      <div className="background" />
+      <div className="vignette" />
 
-          <Link
-            href="/register"
-            className="border rounded px-6 py-3"
-          >
-            Create Account
-          </Link>
+      {/* Header */}
+
+      <header className="header">
+        <Link
+          href="/"
+          className="logo"
+          aria-label="PROJECT"
+        >
+          <span className="logo-circle" />
+          <span className="logo-text">
+            PROJECT
+          </span>
+        </Link>
+      </header>
+
+      {/* Hero */}
+
+      <section className="hero">
+
+        <div className="hero-inner">
+
+          <h1 className="hero-title hero-light">
+            A quiet place
+          </h1>
+
+          <h2 className="hero-title hero-muted">
+            that remembers
+          </h2>
+
+          <h3 className="hero-title hero-muted">
+            everything
+          </h3>
+
+          <p className="subtitle">
+            Your second brain for goals, memories,
+            <br />
+            habits and progress.
+          </p>
+
+          <div className="buttons">
+
+            <Link
+              href="/login"
+              className="button button-primary"
+            >
+              Continue
+            </Link>
+
+            <Link
+              href="/register"
+              className="button button-secondary"
+            >
+              Create account
+            </Link>
+
+          </div>
+
         </div>
-      </div>
+
+      </section>
+
+      {/* Footer */}
+
+      <footer className="footer">
+
+        <Link href="/privacy">
+          Privacy
+        </Link>
+
+        <span>•</span>
+
+        <Link href="/terms">
+          Terms
+        </Link>
+
+      </footer>
+
     </main>
   );
 }
