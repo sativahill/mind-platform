@@ -64,7 +64,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="login-page">
+    <main className="login-page auth-page">
       <div
         className="login-background"
         aria-hidden="true"
@@ -89,25 +89,19 @@ export default function LoginPage() {
         </Link>
       </header>
 
-      <section className="login-content">
-        <div className="login-heading">
-          <span className="login-eyebrow">
-            Welcome back
-          </span>
-
-          <h1 className="login-title">
-            Continue your
-            <br />
-            journey.
+      <section className="login-content auth-content">
+        <div className="login-heading auth-heading">
+          <h1 className="login-title auth-title">
+            Welcome Back
           </h1>
 
-          <p className="login-description">
+          <p className="login-description auth-description">
             Everything you have built is still here.
           </p>
         </div>
 
         <form
-          className="login-form"
+          className="login-form auth-form"
           onSubmit={handleSubmit}
           noValidate
         >
