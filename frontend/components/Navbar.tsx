@@ -3,8 +3,14 @@
 import "./navbar.css";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+import {
+  usePathname,
+  useRouter,
+} from "next/navigation";
 
 interface NavigationItem {
   href: string;
@@ -42,12 +48,46 @@ const navigationItems: NavigationItem[] = [
   },
 ];
 
+function getGreeting() {
+  const hour = new Date().getHours();
+
+  if (hour < 12) {
+    return "Good morning";
+  }
+
+  if (hour < 18) {
+    return "Good afternoon";
+  }
+
+  return "Good evening";
+}
+
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
   const [isMenuOpen, setIsMenuOpen] =
     useState(false);
+
+  const [greeting, setGreeting] =
+    useState(getGreeting);
+
+  useEffect(() => {
+    function updateGreeting() {
+      setGreeting(getGreeting());
+    }
+
+    updateGreeting();
+
+    const intervalId = window.setInterval(
+      updateGreeting,
+      60_000
+    );
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   function isActiveRoute(href: string) {
     return (
@@ -61,8 +101,13 @@ export default function Navbar() {
   }
 
   function logout() {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    localStorage.removeItem(
+      "access_token"
+    );
+
+    localStorage.removeItem(
+      "refresh_token"
+    );
 
     setIsMenuOpen(false);
 
@@ -72,18 +117,27 @@ export default function Navbar() {
   return (
     <header className="app-navbar">
       <div className="app-navbar-inner">
-        <Link
-          href="/home"
-          className="app-navbar-logo"
-          aria-label="PROJECT home"
-          onClick={closeMenu}
-        >
-          <span className="app-navbar-logo-circle" />
+        <div className="app-navbar-identity">
+          <Link
+            href="/home"
+            className="app-navbar-logo"
+            aria-label="PROJECT home"
+            onClick={closeMenu}
+          >
+            <span className="app-navbar-logo-circle" />
 
-          <span className="app-navbar-logo-text">
-            PROJECT
+            <span className="app-navbar-logo-text">
+              PROJECT
+            </span>
+          </Link>
+
+          <span
+            className="app-navbar-greeting"
+            aria-label={greeting}
+          >
+            {greeting}.
           </span>
-        </Link>
+        </div>
 
         <nav
           className={`app-navbar-navigation ${
@@ -94,9 +148,8 @@ export default function Navbar() {
           aria-label="Main navigation"
         >
           {navigationItems.map((item) => {
-            const active = isActiveRoute(
-              item.href
-            );
+            const active =
+              isActiveRoute(item.href);
 
             return (
               <Link
@@ -108,7 +161,9 @@ export default function Navbar() {
                     : ""
                 }`}
                 aria-current={
-                  active ? "page" : undefined
+                  active
+                    ? "page"
+                    : undefined
                 }
                 onClick={closeMenu}
               >
