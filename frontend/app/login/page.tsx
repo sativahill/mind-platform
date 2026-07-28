@@ -12,8 +12,19 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  async function handleSubmit(event: FormEvent) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    setError("");
+    setIsSubmitting(true);
 
     try {
       const response = await fetch(
@@ -24,7 +35,7 @@ export default function LoginPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            username,
+            username: username.trim(),
             password,
           }),
         }
@@ -33,75 +44,74 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert("Invalid username or password.");
+        setError("The username or password is incorrect.");
         return;
       }
 
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
 
-      router.push("/home");
+      router.replace("/home");
     } catch (error) {
-      console.error(error);
-      alert("Unable to connect to the server.");
+      console.error("Login error:", error);
+
+      setError(
+        "Unable to connect to the server. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   return (
     <main className="login-page">
-      <div className="login-background" />
-      <div className="login-vignette" />
+      <div
+        className="login-background"
+        aria-hidden="true"
+      />
 
-      {/* Header */}
+      <div
+        className="login-vignette"
+        aria-hidden="true"
+      />
 
       <header className="login-header">
         <Link
           href="/"
           className="login-logo"
-          aria-label="Back to Landing"
+          aria-label="Return to the landing page"
         >
           <span className="login-circle" />
 
           <span className="login-text">
             PROJECT
           </span>
-
-          <span className="login-back">
-            ← Back
-          </span>
         </Link>
       </header>
 
-      {/* Content */}
-
       <section className="login-content">
+        <div className="login-heading">
+          <span className="login-eyebrow">
+            Welcome back
+          </span>
 
-        <h1 className="login-title">
-          Welcome back
-        </h1>
+          <h1 className="login-title">
+            Continue your
+            <br />
+            journey.
+          </h1>
 
-        <p className="login-description">
-          Continue where you left off.
-        </p>
+          <p className="login-description">
+            Everything you have built is still here.
+          </p>
+        </div>
 
         <form
           className="login-form"
           onSubmit={handleSubmit}
+          noValidate
         >
-
           <div className="input-group">
-
-            <input
-              id="username"
-              className="input"
-              type="text"
-              placeholder=" "
-              autoComplete="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-
             <label
               htmlFor="username"
               className="input-label"
@@ -109,21 +119,22 @@ export default function LoginPage() {
               Username
             </label>
 
+            <input
+              id="username"
+              className="input"
+              type="text"
+              autoComplete="username"
+              value={username}
+              onChange={(event) => {
+                setUsername(event.target.value);
+                setError("");
+              }}
+              disabled={isSubmitting}
+              required
+            />
           </div>
 
           <div className="input-group">
-
-            <input
-              id="password"
-              className="input"
-              type="password"
-              placeholder=" "
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-
             <label
               htmlFor="password"
               className="input-label"
@@ -131,26 +142,94 @@ export default function LoginPage() {
               Password
             </label>
 
+            <div className="password-field">
+              <input
+                id="password"
+                className="input password-input"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                  setError("");
+                }}
+                disabled={isSubmitting}
+                required
+              />
+
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => {
+                  setShowPassword((current) => !current);
+                }}
+                aria-label={
+                  showPassword
+                    ? "Hide password"
+                    : "Show password"
+                }
+                aria-pressed={showPassword}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+          </div>
+
+          <div
+            className={`login-error ${
+              error ? "login-error-visible" : ""
+            }`}
+            role="alert"
+            aria-live="polite"
+          >
+            {error}
           </div>
 
           <button
             type="submit"
             className="login-button"
+            disabled={
+              isSubmitting ||
+              !username.trim() ||
+              !password
+            }
           >
-            Continue
-          </button>
+            <span>
+              {isSubmitting
+                ? "Signing in"
+                : "Continue"}
+            </span>
 
+            <span
+              className="login-button-arrow"
+              aria-hidden="true"
+            >
+              →
+            </span>
+          </button>
         </form>
 
-        <div className="login-footer">
-          Don't have an account?{" "}
+        <p className="login-footer">
+          New to PROJECT?{" "}
           <Link href="/register">
-            Create account
+            Create an account
           </Link>
-        </div>
-
+        </p>
       </section>
 
+      <footer className="login-legal">
+        <Link href="/privacy">
+          Privacy
+        </Link>
+
+        <span aria-hidden="true">
+          •
+        </span>
+
+        <Link href="/terms">
+          Terms
+        </Link>
+      </footer>
     </main>
   );
 }
