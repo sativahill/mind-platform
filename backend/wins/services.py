@@ -63,10 +63,34 @@ def update_brain_from_win(win: Win) -> None:
 
     updated_wins.sort(
         key=lambda stored_win: (
-            stored_win.get("date", ""),
-            stored_win.get("id", 0),
+            stored_win.get(
+                "date",
+                "",
+            ),
+            stored_win.get(
+                "id",
+                0,
+            ),
         ),
         reverse=True,
+    )
+
+    actual_last_win = (
+        Win.objects
+        .filter(user=win.user)
+        .order_by(
+            "-date",
+            "-created_at",
+        )
+        .first()
+    )
+
+    serialized_last_win = (
+        serialize_win_for_brain(
+            actual_last_win
+        )
+        if actual_last_win
+        else None
     )
 
     update_data = {
@@ -74,13 +98,17 @@ def update_brain_from_win(win: Win) -> None:
             "wins": updated_wins,
         },
         "context": {
-            "last_win": serialized_win,
+            "last_win": serialized_last_win,
         },
         "progress": {
-            "wins_count": win.user.wins.count(),
-            "large_wins_count": win.user.wins.filter(
-                size=Win.LARGE
-            ).count(),
+            "wins_count": (
+                win.user.wins.count()
+            ),
+            "large_wins_count": (
+                win.user.wins.filter(
+                    size=Win.LARGE
+                ).count()
+            ),
         },
     }
 

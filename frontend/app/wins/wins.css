@@ -1,0 +1,1832 @@
+/* ==========================================================
+   MY WINS — PAGE
+========================================================== */
+
+.wins-page {
+    position: relative;
+
+    min-height: calc(100svh - 72px);
+    overflow: hidden;
+
+    background: #0c0c0f;
+    color: #f1ede7;
+
+    isolation: isolate;
+}
+
+.wins-background {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            ellipse at 48% 24%,
+            rgba(122, 91, 230, 0.052),
+            transparent 47%
+        ),
+        #0c0c0f;
+}
+
+.wins-background::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    opacity: 0.045;
+
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.2) 0.65px,
+            transparent 0.75px
+        );
+
+    background-size: 24px 24px;
+
+    mask-image:
+        radial-gradient(
+            ellipse at 50% 40%,
+            black 10%,
+            transparent 78%
+        );
+}
+
+.wins-background::after {
+    content: "";
+
+    position: absolute;
+    top: 28%;
+    left: 50%;
+
+    width: 900px;
+    height: 700px;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: rgba(113, 81, 222, 0.04);
+
+    filter: blur(180px);
+
+    pointer-events: none;
+}
+
+/* ==========================================================
+   SHELL
+========================================================== */
+
+.wins-shell {
+    position: relative;
+    z-index: 1;
+
+    width: min(1120px, calc(100% - 64px));
+
+    margin: 0 auto;
+    padding: 38px 0 84px;
+
+    animation:
+        winsAppear
+        560ms
+        cubic-bezier(0.22, 1, 0.36, 1)
+        both;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.wins-header {
+    min-height: 62px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+
+    padding: 0 2px 20px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.wins-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.wins-heading-mark {
+    width: 8px;
+    height: 8px;
+
+    flex: 0 0 auto;
+
+    border: 1px solid rgba(174, 150, 255, 0.85);
+    border-radius: 50%;
+
+    background: rgba(132, 100, 241, 0.42);
+
+    box-shadow:
+        0 0 13px rgba(132, 100, 241, 0.3);
+}
+
+.wins-heading h1 {
+    margin: 0;
+
+    color: rgba(243, 238, 232, 0.95);
+
+    font-family:
+        var(--font-serif),
+        "Times New Roman",
+        Georgia,
+        serif;
+
+    font-size: 29px;
+    font-weight: 400;
+
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.wins-add-button {
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 0 16px;
+
+    border: 1px solid rgba(158, 132, 255, 0.36);
+    border-radius: 999px;
+
+    background: rgba(128, 96, 235, 0.16);
+    color: rgba(235, 228, 255, 0.96);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        transform 190ms ease,
+        border-color 190ms ease,
+        background-color 190ms ease,
+        color 190ms ease;
+}
+
+.wins-add-button > span {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.wins-add-button:hover {
+    transform: translateY(-1px);
+
+    border-color: rgba(178, 156, 255, 0.58);
+
+    background: rgba(128, 96, 235, 0.24);
+    color: #ffffff;
+}
+
+/* ==========================================================
+   TOOLBAR
+========================================================== */
+
+.wins-toolbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+
+    padding: 32px 2px 28px;
+}
+
+.wins-total {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.wins-total strong {
+    color: rgba(244, 239, 233, 0.95);
+
+    font-family:
+        var(--font-serif),
+        "Times New Roman",
+        Georgia,
+        serif;
+
+    font-size: clamp(50px, 5vw, 70px);
+    font-weight: 400;
+
+    line-height: 0.8;
+    letter-spacing: -0.055em;
+}
+
+.wins-total > span {
+    color: rgba(202, 196, 206, 0.56);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ==========================================================
+   FILTERS
+========================================================== */
+
+.wins-filters {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 4px;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.012);
+}
+
+.wins-filter {
+    min-height: 31px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 0 12px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: transparent;
+    color: rgba(205, 199, 209, 0.58);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    text-transform: capitalize;
+
+    cursor: pointer;
+
+    transition:
+        background-color 180ms ease,
+        color 180ms ease;
+}
+
+.wins-filter strong {
+    color: rgba(196, 187, 207, 0.48);
+
+    font-size: 10px;
+    font-weight: 500;
+
+    transition: color 180ms ease;
+}
+
+.wins-filter:hover {
+    background: rgba(255, 255, 255, 0.035);
+    color: rgba(239, 234, 241, 0.86);
+}
+
+.wins-filter-active {
+    background: rgba(126, 94, 235, 0.14);
+    color: rgba(244, 239, 233, 0.94);
+}
+
+.wins-filter-active strong {
+    color: rgba(194, 177, 255, 0.96);
+}
+
+/* ==========================================================
+   KEYBOARD FOCUS
+========================================================== */
+
+.wins-add-button:focus-visible,
+.wins-filter:focus-visible,
+.wins-empty button:focus-visible,
+.wins-load-error button:focus-visible,
+.wins-composer-close:focus-visible,
+.wins-size-option:focus-visible,
+.wins-form-danger > button:focus-visible,
+.wins-delete-confirm button:focus-visible,
+.wins-submit-button:focus-visible {
+    outline: 1px solid rgba(164, 137, 253, 0.88);
+    outline-offset: 3px;
+}
+
+.win-item-main:focus-visible {
+    outline: 1px solid rgba(164, 137, 253, 0.78);
+    outline-offset: -2px;
+
+    background: rgba(126, 94, 235, 0.055);
+}
+
+.wins-field input:focus-visible,
+.wins-field textarea:focus-visible {
+    outline: 1px solid rgba(164, 137, 253, 0.72);
+    outline-offset: 3px;
+}
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+
+.wins-content {
+    position: relative;
+
+    min-height: 390px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+/* ==========================================================
+   YEARS
+========================================================== */
+
+.wins-years {
+    display: flex;
+    flex-direction: column;
+}
+
+.wins-year {
+    display: grid;
+    grid-template-columns: 100px minmax(0, 1fr);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+}
+
+.wins-year-label {
+    padding: 33px 24px 0 2px;
+
+    border-right: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.wins-year-label > span {
+    position: sticky;
+    top: 100px;
+
+    color: rgba(207, 200, 211, 0.5);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: 0.14em;
+}
+
+/* ==========================================================
+   WIN ITEM
+========================================================== */
+
+.wins-list {
+    min-width: 0;
+}
+
+.win-item {
+    position: relative;
+
+    min-width: 0;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.win-item:last-child {
+    border-bottom: 0;
+}
+
+.win-item-main {
+    position: relative;
+
+    width: 100%;
+
+    display: grid;
+    grid-template-columns:
+        92px
+        28px
+        minmax(0, 1fr)
+        28px;
+
+    align-items: stretch;
+    gap: 18px;
+
+    padding: 28px 24px 28px 30px;
+
+    border: 0;
+    background: transparent;
+    color: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background-color 190ms ease,
+        padding-left 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.win-item-main:hover {
+    padding-left: 34px;
+
+    background: rgba(126, 94, 235, 0.055);
+}
+
+/* ==========================================================
+   DATE
+========================================================== */
+
+.win-date {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    padding-top: 2px;
+}
+
+.win-date strong {
+    color: rgba(239, 234, 228, 0.84);
+
+    font-family:
+        var(--font-serif),
+        "Times New Roman",
+        Georgia,
+        serif;
+
+    font-size: 28px;
+    font-weight: 400;
+
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+}
+
+.win-date > span {
+    margin-top: 7px;
+
+    color: rgba(205, 198, 209, 0.56);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: 0.06em;
+}
+
+/* ==========================================================
+   RAIL
+========================================================== */
+
+.win-rail {
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+}
+
+.win-dot {
+    position: relative;
+    z-index: 2;
+
+    width: 7px;
+    height: 7px;
+
+    margin-top: 9px;
+
+    border: 1px solid rgba(213, 205, 219, 0.42);
+    border-radius: 50%;
+
+    background: #111116;
+
+    transition:
+        transform 190ms ease,
+        border-color 190ms ease,
+        background-color 190ms ease,
+        box-shadow 190ms ease;
+}
+
+.win-line {
+    position: absolute;
+
+    top: 16px;
+    bottom: -29px;
+    left: 50%;
+
+    width: 1px;
+
+    transform: translateX(-50%);
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.13),
+            rgba(255, 255, 255, 0.035)
+        );
+}
+
+.win-item:last-child .win-line {
+    display: none;
+}
+
+.win-item-main:hover .win-dot {
+    transform: scale(1.18);
+
+    border-color: rgba(185, 164, 255, 0.82);
+}
+
+/* ==========================================================
+   COPY
+========================================================== */
+
+.win-copy {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.win-title {
+    color: rgba(240, 235, 229, 0.9);
+
+    font-family:
+        var(--font-serif),
+        "Times New Roman",
+        Georgia,
+        serif;
+
+    font-size: 24px;
+    font-weight: 400;
+
+    line-height: 1.12;
+    letter-spacing: -0.032em;
+}
+
+.win-description {
+    display: -webkit-box;
+
+    max-width: 650px;
+
+    margin-top: 10px;
+
+    overflow: hidden;
+
+    color: rgba(205, 199, 209, 0.64);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+    line-height: 1.65;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.win-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    margin-top: 13px;
+}
+
+.win-meta > span {
+    color: rgba(202, 195, 207, 0.5);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.win-meta > span + span::before {
+    content: "·";
+
+    margin-right: 8px;
+
+    color: rgba(255, 255, 255, 0.13);
+}
+
+/* ==========================================================
+   SIZE DIFFERENCES
+========================================================== */
+
+.win-item-small .win-dot {
+    width: 6px;
+    height: 6px;
+
+    opacity: 0.66;
+}
+
+.win-item-small .win-title {
+    font-size: 21px;
+
+    color: rgba(226, 221, 216, 0.76);
+}
+
+.win-item-small .win-item-main {
+    min-height: 106px;
+}
+
+.win-item-medium .win-dot {
+    width: 8px;
+    height: 8px;
+
+    border-color: rgba(169, 148, 245, 0.64);
+
+    background: rgba(126, 95, 232, 0.32);
+
+    box-shadow:
+        0 0 10px rgba(124, 92, 231, 0.14);
+}
+
+.win-item-medium .win-title {
+    font-size: 26px;
+}
+
+.win-item-medium .win-item-main {
+    min-height: 124px;
+
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+.win-item-large {
+    background:
+        radial-gradient(
+            ellipse at 45% 50%,
+            rgba(126, 94, 235, 0.05),
+            transparent 62%
+        );
+}
+
+.win-item-large::before {
+    content: "";
+
+    position: absolute;
+    top: 22px;
+    right: 0;
+    bottom: 22px;
+
+    width: 2px;
+
+    border-radius: 999px 0 0 999px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(156, 128, 251, 0.72),
+            transparent
+        );
+
+    opacity: 0.55;
+}
+
+.win-item-large .win-item-main {
+    min-height: 154px;
+
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.win-item-large .win-dot {
+    width: 10px;
+    height: 10px;
+
+    border-color: rgba(190, 171, 255, 0.94);
+
+    background: #896bf0;
+
+    box-shadow:
+        0 0 18px rgba(126, 94, 235, 0.5);
+}
+
+.win-item-large .win-title {
+    color: rgba(247, 241, 235, 0.98);
+
+    font-size: clamp(30px, 3vw, 40px);
+
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+}
+
+.win-item-large .win-description {
+    max-width: 700px;
+
+    color: rgba(218, 211, 221, 0.72);
+
+    font-size: 12px;
+}
+
+.win-item-large .win-meta > span:first-child {
+    color: rgba(182, 161, 255, 0.78);
+}
+
+/* ==========================================================
+   EDIT MARK
+========================================================== */
+
+.win-edit-mark {
+    align-self: center;
+
+    color: rgba(222, 215, 226, 0.36);
+
+    font-size: 14px;
+
+    transition:
+        color 180ms ease,
+        transform 180ms ease;
+}
+
+.win-item-main:hover .win-edit-mark {
+    transform: translate(2px, -2px);
+
+    color: rgba(239, 233, 242, 0.88);
+}
+
+/* ==========================================================
+   EMPTY / ERROR
+========================================================== */
+
+.wins-empty,
+.wins-load-error {
+    min-height: 360px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px;
+
+    text-align: center;
+}
+
+.wins-empty-mark {
+    width: 9px;
+    height: 9px;
+
+    margin-bottom: 17px;
+
+    border: 1px solid rgba(173, 149, 255, 0.54);
+    border-radius: 50%;
+}
+
+.wins-empty p,
+.wins-load-error p {
+    margin: 0;
+
+    color: rgba(201, 194, 204, 0.46);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.wins-empty button,
+.wins-load-error button {
+    margin-top: 15px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    color: rgba(184, 164, 255, 0.8);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: color 180ms ease;
+}
+
+.wins-empty button:hover,
+.wins-load-error button:hover {
+    color: #c4b4ff;
+}
+
+/* ==========================================================
+   LOADING
+========================================================== */
+
+.wins-loading {
+    display: flex;
+    flex-direction: column;
+}
+
+.wins-loading > span {
+    height: 128px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.025),
+            transparent
+        );
+
+    background-size: 220% 100%;
+
+    animation:
+        winsLoading
+        1.35s
+        linear
+        infinite;
+}
+
+/* ==========================================================
+   COMPOSER BACKDROP
+========================================================== */
+
+.wins-composer-backdrop {
+    position: fixed;
+    top: 72px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 90;
+
+    height: auto;
+
+    display: flex;
+    justify-content: flex-end;
+
+    background: rgba(3, 3, 5, 0);
+
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        background-color 260ms ease,
+        visibility 260ms ease;
+}
+
+.wins-composer-backdrop-open {
+    background: rgba(3, 3, 5, 0.4);
+
+    visibility: visible;
+    pointer-events: auto;
+
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+/* ==========================================================
+   COMPOSER
+========================================================== */
+
+.wins-composer {
+    width: min(480px, 100%);
+    max-width: 100vw;
+    height: calc(100dvh - 72px);
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 34px 36px 30px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color:
+        rgba(171, 151, 233, 0.28)
+        transparent;
+
+    border-left: 1px solid rgba(255, 255, 255, 0.085);
+
+    background:
+        radial-gradient(
+            ellipse at 30% 12%,
+            rgba(127, 94, 235, 0.06),
+            transparent 45%
+        ),
+        rgba(14, 14, 18, 0.985);
+
+    box-shadow:
+        -30px 0 80px rgba(0, 0, 0, 0.28);
+
+    transform: translateX(102%);
+    overscroll-behavior: contain;
+
+    transition:
+        transform
+        340ms
+        cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wins-composer-open {
+    transform: translateX(0);
+}
+
+/* ==========================================================
+   COMPOSER HEADER
+========================================================== */
+
+.wins-composer-header {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+
+    padding-bottom: 27px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.wins-composer-header > div {
+    min-width: 0;
+    padding: 2px 0 3px;
+}
+
+.wins-composer-header > div > span {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: rgba(204, 197, 209, 0.56);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.wins-composer-header h2 {
+    margin: 0;
+
+    color: rgba(244, 239, 233, 0.97);
+
+    font-family:
+        var(--font-serif),
+        "Times New Roman",
+        Georgia,
+        serif;
+
+    font-size: 39px;
+    font-weight: 400;
+
+    line-height: 1.08;
+    letter-spacing: -0.045em;
+}
+
+.wins-composer-close {
+    width: 34px;
+    height: 34px;
+
+    display: inline-flex;
+    flex: 0 0 34px;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.045);
+    color: rgba(236, 230, 238, 0.78);
+
+    font-size: 20px;
+    font-weight: 300;
+
+    cursor: pointer;
+
+    transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease;
+}
+
+.wins-composer-close:hover {
+    transform: rotate(4deg);
+
+    border-color: rgba(174, 151, 255, 0.52);
+    background: rgba(126, 94, 235, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* ==========================================================
+   FORM
+========================================================== */
+
+.wins-form {
+    min-height: calc(100% - 104px);
+
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+
+    padding-top: 29px;
+}
+
+.wins-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.wins-field + .wins-field,
+.wins-field + .wins-form-row {
+    margin-top: 27px;
+}
+
+.wins-field > span,
+.wins-size-field legend {
+    color: rgba(214, 207, 218, 0.66);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.wins-field > span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.wins-field > span small {
+    color: rgba(198, 190, 202, 0.44);
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: 0;
+    text-transform: lowercase;
+}
+
+.wins-field input,
+.wins-field textarea {
+    width: 100%;
+
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 0;
+    outline: none;
+
+    background: transparent;
+    color: rgba(241, 236, 230, 0.92);
+    caret-color: #997cf5;
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 15px;
+    line-height: 1.55;
+
+    transition:
+        border-color 180ms ease,
+        color 180ms ease;
+}
+
+.wins-field input {
+    height: 46px;
+
+    padding: 0;
+}
+
+.wins-field textarea {
+    min-height: 120px;
+
+    padding: 9px 0 14px;
+
+    resize: vertical;
+
+    line-height: 1.65;
+}
+
+.wins-field input::placeholder,
+.wins-field textarea::placeholder {
+    color: rgba(201, 194, 205, 0.44);
+}
+
+.wins-field input:focus,
+.wins-field textarea:focus {
+    border-color: rgba(155, 126, 250, 0.82);
+}
+
+.wins-field input[type="date"] {
+    color-scheme: dark;
+    color: rgba(229, 223, 232, 0.84);
+}
+
+.wins-field input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.68;
+
+    cursor: pointer;
+}
+
+/* ==========================================================
+   FORM ROW
+========================================================== */
+
+.wins-form-row {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1.2fr);
+
+    gap: 25px;
+
+    margin-top: 27px;
+}
+
+.wins-size-field {
+    min-width: 0;
+
+    padding: 0;
+
+    border: 0;
+}
+
+.wins-size-options {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 13px;
+}
+
+.wins-size-option {
+    min-width: 0;
+    height: 34px;
+
+    display: inline-flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 0 9px;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.025);
+    color: rgba(210, 203, 214, 0.62);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    text-transform: capitalize;
+
+    cursor: pointer;
+
+    transition:
+        border-color 180ms ease,
+        background-color 180ms ease,
+        color 180ms ease;
+}
+
+.wins-size-option > span {
+    width: 5px;
+    height: 5px;
+
+    border: 1px solid currentColor;
+    border-radius: 50%;
+
+    transition:
+        transform 180ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.wins-size-option:hover {
+    border-color: rgba(164, 139, 248, 0.38);
+    background: rgba(126, 94, 235, 0.06);
+    color: rgba(232, 226, 235, 0.84);
+}
+
+.wins-size-option-active {
+    border-color: rgba(164, 137, 253, 0.62);
+
+    background: rgba(126, 94, 235, 0.14);
+    color: rgba(216, 204, 255, 0.98);
+}
+
+.wins-size-option-active > span {
+    transform: scale(1.18);
+
+    background: #8b6df0;
+    border-color: rgba(218, 207, 255, 0.96);
+
+    box-shadow:
+        0 0 9px rgba(126, 94, 235, 0.5);
+}
+
+/* ==========================================================
+   SOURCE
+========================================================== */
+
+.wins-source-note {
+    margin-top: 24px;
+    padding: 11px 13px;
+
+    border-left: 1px solid rgba(153, 124, 247, 0.42);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(126, 94, 235, 0.04),
+            transparent
+        );
+}
+
+.wins-source-note > span {
+    color: rgba(206, 194, 246, 0.72);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+}
+
+/* ==========================================================
+   FORM ERROR
+========================================================== */
+
+.wins-form-error {
+    margin: 18px 0 0;
+
+    color: rgba(239, 151, 151, 0.84);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+/* ==========================================================
+   FORM FOOTER
+========================================================== */
+
+.wins-form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    margin-top: auto;
+    padding-top: 25px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.075);
+
+    flex: 0 0 auto;
+}
+
+.wins-form-danger {
+    min-height: 32px;
+
+    display: flex;
+    align-items: center;
+}
+
+.wins-form-danger > button {
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    color: rgba(235, 144, 144, 0.5);
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: color 180ms ease;
+}
+
+.wins-form-danger > button:hover {
+    color: rgba(247, 159, 159, 0.88);
+}
+
+.wins-delete-confirm {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+}
+
+.wins-delete-confirm > span {
+    color: rgba(235, 151, 151, 0.68);
+}
+
+.wins-delete-confirm button {
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    color: rgba(226, 220, 228, 0.54);
+
+    font-family: inherit;
+    font-size: inherit;
+
+    cursor: pointer;
+
+    transition: color 180ms ease;
+}
+
+.wins-delete-confirm button:last-child {
+    color: rgba(243, 148, 148, 0.82);
+}
+
+.wins-delete-confirm button:hover:not(:disabled) {
+    color: #ffffff;
+}
+
+.wins-delete-confirm button:disabled {
+    cursor: default;
+    opacity: 0.35;
+}
+
+.wins-submit-button {
+    min-width: 105px;
+    height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 0 17px;
+
+    border: 1px solid rgba(167, 142, 255, 0.3);
+    border-radius: 999px;
+
+    background: rgba(128, 96, 235, 0.9);
+    color: #ffffff;
+
+    font-family:
+        var(--font-inter),
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 28px rgba(81, 54, 185, 0.19);
+
+    transition:
+        transform 190ms ease,
+        border-color 190ms ease,
+        background-color 190ms ease,
+        box-shadow 190ms ease,
+        opacity 190ms ease;
+}
+
+.wins-submit-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+
+    border-color: rgba(187, 166, 255, 0.42);
+    background: rgba(141, 109, 244, 0.98);
+
+    box-shadow:
+        0 14px 34px rgba(81, 54, 185, 0.27);
+}
+
+.wins-submit-button:disabled {
+    cursor: not-allowed;
+
+    border-color: rgba(155, 133, 232, 0.16);
+    background: rgba(113, 87, 197, 0.24);
+    color: rgba(225, 218, 232, 0.48);
+    box-shadow: none;
+}
+
+.wins-submit-button > span {
+    font-size: 12px;
+
+    transition: transform 180ms ease;
+}
+
+.wins-submit-button:hover:not(:disabled) > span {
+    transform: translate(2px, -2px);
+}
+
+/* ==========================================================
+   ANIMATIONS
+========================================================== */
+
+@keyframes winsAppear {
+    from {
+        opacity: 0;
+        transform: translateY(9px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes winsLoading {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 960px) {
+    .wins-shell {
+        width: min(820px, calc(100% - 44px));
+    }
+
+    .wins-year {
+        grid-template-columns: 78px minmax(0, 1fr);
+    }
+
+    .win-item-main {
+        grid-template-columns:
+            80px
+            24px
+            minmax(0, 1fr)
+            24px;
+
+        gap: 14px;
+
+        padding-right: 18px;
+        padding-left: 22px;
+    }
+
+    .win-item-main:hover {
+        padding-left: 27px;
+    }
+}
+
+@media (max-width: 900px) {
+    .wins-composer-backdrop {
+        top: 66px;
+    }
+
+    .wins-composer {
+        height: calc(100dvh - 66px);
+    }
+}
+
+@media (max-width: 720px) {
+    .wins-page {
+        min-height: calc(100svh - 66px);
+
+        overflow: visible;
+    }
+
+    .wins-shell {
+        width: min(620px, calc(100% - 34px));
+
+        padding:
+            28px
+            0
+            62px;
+    }
+
+    .wins-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: 25px;
+    }
+
+    .wins-filters {
+        max-width: 100%;
+
+        overflow-x: auto;
+
+        scrollbar-width: none;
+    }
+
+    .wins-filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .wins-year {
+        grid-template-columns: 1fr;
+    }
+
+    .wins-year-label {
+        padding: 20px 0 12px;
+
+        border-right: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+    }
+
+    .wins-year-label > span {
+        position: static;
+    }
+
+    .win-item-main {
+        grid-template-columns:
+            72px
+            20px
+            minmax(0, 1fr)
+            22px;
+
+        gap: 12px;
+
+        padding:
+            24px
+            14px
+            24px
+            4px;
+    }
+
+    .win-item-main:hover {
+        padding-left: 8px;
+    }
+
+    .win-item-large .win-item-main {
+        padding-top: 33px;
+        padding-bottom: 33px;
+    }
+
+    .wins-composer {
+        padding:
+            29px
+            28px
+            25px;
+    }
+}
+
+@media (max-width: 520px) {
+    .wins-shell {
+        width: calc(100% - 26px);
+
+        padding-top: 22px;
+    }
+
+    .wins-header {
+        padding-bottom: 16px;
+    }
+
+    .wins-heading h1 {
+        font-size: 25px;
+    }
+
+    .wins-add-button {
+        height: 35px;
+
+        padding: 0 13px;
+    }
+
+    .wins-toolbar {
+        padding:
+            25px
+            0
+            22px;
+    }
+
+    .wins-total strong {
+        font-size: 54px;
+    }
+
+    .wins-filter {
+        padding:
+            0
+            10px;
+    }
+
+    .win-item-main {
+        grid-template-columns:
+            54px
+            18px
+            minmax(0, 1fr);
+
+        gap: 10px;
+
+        padding:
+            22px
+            4px;
+    }
+
+    .win-item-main:hover {
+        padding-left: 4px;
+    }
+
+    .win-edit-mark {
+        display: none;
+    }
+
+    .win-date strong {
+        font-size: 24px;
+    }
+
+    .win-date > span {
+        max-width: 52px;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .win-title,
+    .win-item-medium .win-title {
+        font-size: 22px;
+    }
+
+    .win-item-large .win-title {
+        font-size: 30px;
+    }
+
+    .win-item-large .win-item-main {
+        min-height: 136px;
+    }
+
+    .wins-composer {
+        width: 100%;
+
+        padding:
+            26px
+            22px
+            22px;
+
+        border-left: 0;
+    }
+
+    .wins-composer-header h2 {
+        font-size: 35px;
+    }
+
+    .wins-form-row {
+        grid-template-columns: 1fr;
+
+        gap: 27px;
+    }
+
+    .wins-form-footer {
+        align-items: flex-end;
+    }
+}
+
+@media (max-width: 390px) {
+    .wins-heading {
+        gap: 10px;
+    }
+
+    .wins-add-button {
+        gap: 6px;
+
+        padding:
+            0
+            11px;
+    }
+
+    .wins-filter {
+        padding:
+            0
+            9px;
+    }
+
+    .win-item-main {
+        grid-template-columns:
+            48px
+            16px
+            minmax(0, 1fr);
+    }
+
+    .win-date strong {
+        font-size: 22px;
+    }
+
+    .win-description {
+        font-size: 11px;
+    }
+
+    .wins-size-option {
+        padding:
+            0
+            6px;
+    }
+
+    .wins-form-footer {
+        gap: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wins-shell,
+    .wins-loading > span {
+        animation: none;
+    }
+
+    .wins-add-button,
+    .wins-filter,
+    .win-item-main,
+    .win-dot,
+    .win-edit-mark,
+    .wins-composer-backdrop,
+    .wins-composer,
+    .wins-composer-close,
+    .wins-field input,
+    .wins-field textarea,
+    .wins-size-option,
+    .wins-size-option > span,
+    .wins-form-danger > button,
+    .wins-delete-confirm button,
+    .wins-submit-button,
+    .wins-submit-button > span {
+        transition: none;
+    }
+}
