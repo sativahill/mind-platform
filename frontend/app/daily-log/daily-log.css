@@ -999,6 +999,434 @@
         infinite;
 }
 
+
+/* ==========================================================
+   AI WIN SUGGESTIONS
+========================================================== */
+
+.daily-log-suggestions {
+    flex: 0 0 auto;
+
+    margin-top: 14px;
+    padding-top: 16px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.085);
+}
+
+.daily-log-analysis-status {
+    min-height: 58px;
+
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 13px 15px;
+
+    border: 1px solid rgba(150, 124, 244, 0.18);
+    border-radius: 14px;
+
+    background: rgba(126, 94, 235, 0.045);
+}
+
+.daily-log-analysis-pulse {
+    width: 9px;
+    height: 9px;
+
+    flex: 0 0 auto;
+
+    border: 1px solid rgba(194, 177, 255, 0.88);
+    border-radius: 50%;
+
+    background: rgba(139, 108, 242, 0.66);
+
+    box-shadow: 0 0 0 0 rgba(139, 108, 242, 0.35);
+
+    animation: dailyLogAnalysisPulse 1.45s ease-out infinite;
+}
+
+.daily-log-analysis-status > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.daily-log-analysis-status strong {
+    color: rgba(239, 234, 242, 0.9);
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.daily-log-analysis-status div > span {
+    color: rgba(202, 194, 208, 0.58);
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+.daily-log-suggestion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.daily-log-suggestion-heading {
+    min-height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    padding: 0 2px 7px;
+}
+
+.daily-log-suggestion-heading > span {
+    color: rgba(208, 201, 214, 0.68);
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.daily-log-suggestion-heading > strong {
+    min-width: 23px;
+    height: 23px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(166, 140, 255, 0.2);
+    border-radius: 50%;
+
+    background: rgba(126, 94, 235, 0.055);
+    color: rgba(201, 186, 255, 0.86);
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+}
+
+.daily-log-suggestion {
+    position: relative;
+
+    min-width: 0;
+
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 15px;
+
+    padding: 14px 15px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(255, 255, 255, 0.085);
+    border-radius: 15px;
+
+    background: rgba(255, 255, 255, 0.018);
+
+    transition:
+        border-color 180ms ease,
+        background-color 180ms ease,
+        transform 180ms ease;
+}
+
+.daily-log-suggestion::before {
+    content: "";
+
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: 0;
+
+    width: 2px;
+
+    border-radius: 0 999px 999px 0;
+
+    background: rgba(142, 111, 244, 0.42);
+}
+
+.daily-log-suggestion:hover {
+    transform: translateY(-1px);
+
+    border-color: rgba(166, 140, 255, 0.18);
+    background: rgba(126, 94, 235, 0.035);
+}
+
+.daily-log-suggestion-medium::before {
+    background: rgba(161, 134, 250, 0.72);
+}
+
+.daily-log-suggestion-large::before {
+    background: #9b7df5;
+
+    box-shadow: 0 0 15px rgba(139, 108, 242, 0.45);
+}
+
+.daily-log-suggestion-mark {
+    min-width: 38px;
+    height: 25px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(164, 139, 255, 0.2);
+    border-radius: 999px;
+
+    background: rgba(126, 94, 235, 0.06);
+    color: rgba(202, 186, 255, 0.88);
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.daily-log-suggestion-copy {
+    min-width: 0;
+}
+
+.daily-log-suggestion-copy h3 {
+    margin: 0;
+
+    color: rgba(243, 238, 233, 0.94);
+
+    font-family: var(--font-serif), "Times New Roman", Georgia, serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+}
+
+.daily-log-suggestion-copy p {
+    display: -webkit-box;
+
+    margin: 6px 0 0;
+
+    overflow: hidden;
+
+    color: rgba(202, 195, 207, 0.62);
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 10px;
+    line-height: 1.5;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.daily-log-suggestion-size {
+    display: inline-block;
+
+    margin-top: 7px;
+
+    color: rgba(190, 176, 239, 0.68);
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.daily-log-suggestion-actions {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.daily-log-suggestion-actions button {
+    height: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background-color 180ms ease,
+        color 180ms ease,
+        opacity 180ms ease;
+}
+
+.daily-log-suggestion-dismiss {
+    padding: 0 10px;
+
+    border: 0;
+
+    background: transparent;
+    color: rgba(204, 197, 208, 0.58);
+}
+
+.daily-log-suggestion-dismiss:hover:not(:disabled) {
+    color: rgba(241, 235, 243, 0.9);
+}
+
+.daily-log-suggestion-accept {
+    min-width: 118px;
+
+    padding: 0 14px;
+
+    border: 1px solid rgba(169, 144, 255, 0.28);
+
+    background: rgba(126, 94, 235, 0.82);
+    color: #ffffff;
+
+    box-shadow: 0 8px 20px rgba(80, 53, 184, 0.16);
+}
+
+.daily-log-suggestion-accept:hover:not(:disabled) {
+    transform: translateY(-1px);
+
+    border-color: rgba(192, 173, 255, 0.42);
+    background: rgba(143, 112, 242, 0.96);
+}
+
+.daily-log-suggestion-actions button:disabled {
+    cursor: default;
+    opacity: 0.42;
+}
+
+.daily-log-analysis-empty {
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+
+    padding: 0 2px;
+}
+
+.daily-log-analysis-empty > span {
+    color: rgba(199, 192, 204, 0.55);
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+.daily-log-analysis-empty > button {
+    flex: 0 0 auto;
+
+    padding: 7px 1px;
+
+    border: 0;
+
+    background: transparent;
+    color: rgba(190, 173, 248, 0.86);
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: color 170ms ease;
+}
+
+.daily-log-analysis-empty > button:hover {
+    color: #cbbcff;
+}
+
+.daily-log-analysis-error {
+    margin: 9px 0 0;
+
+    color: rgba(240, 157, 157, 0.84);
+
+    font-family: var(--font-inter), Arial, sans-serif;
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+.daily-log-suggestion-actions button:focus-visible,
+.daily-log-analysis-empty > button:focus-visible {
+    outline: 2px solid rgba(167, 140, 255, 0.72);
+    outline-offset: 3px;
+}
+
+@keyframes dailyLogAnalysisPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(139, 108, 242, 0.34);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(139, 108, 242, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(139, 108, 242, 0);
+    }
+}
+
+@media (max-width: 1040px) {
+    .daily-log-suggestion {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .daily-log-suggestion-actions {
+        grid-column: 2;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 580px) {
+    .daily-log-suggestions {
+        margin-top: 12px;
+        padding-top: 14px;
+    }
+
+    .daily-log-suggestion {
+        grid-template-columns: 1fr;
+        gap: 10px;
+
+        padding: 14px;
+    }
+
+    .daily-log-suggestion-mark {
+        justify-self: flex-start;
+    }
+
+    .daily-log-suggestion-actions {
+        width: 100%;
+
+        grid-column: 1;
+        justify-content: space-between;
+    }
+
+    .daily-log-suggestion-accept {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .daily-log-analysis-empty {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 7px;
+    }
+}
+
 /* ==========================================================
    ANIMATIONS
 ========================================================== */
@@ -1215,11 +1643,18 @@
         animation: none;
     }
 
+    .daily-log-analysis-pulse {
+        animation: none;
+    }
+
     .daily-log-save-button,
     .daily-log-save-button span,
     .daily-log-delete-button,
     .daily-log-timeline-item,
-    .daily-log-timeline-dot {
+    .daily-log-timeline-dot,
+    .daily-log-suggestion,
+    .daily-log-suggestion-actions button,
+    .daily-log-analysis-empty > button {
         transition: none;
     }
 }

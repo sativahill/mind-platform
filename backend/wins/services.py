@@ -250,20 +250,30 @@ def create_automatic_win(
         )
 
     try:
-        win, created = Win.objects.get_or_create(
-            user=user,
-            event_key=normalized_event_key,
-            defaults={
-                "title": title.strip(),
-                "description": description.strip(),
-                "date": date or timezone.localdate(),
-                "size": size,
-                "source": source,
-                "source_id": str(
-                    source_id
-                ).strip(),
-            },
-        )
+        with transaction.atomic():
+            win, created = (
+                Win.objects.get_or_create(
+                    user=user,
+                    event_key=(
+                        normalized_event_key
+                    ),
+                    defaults={
+                        "title": title.strip(),
+                        "description": (
+                            description.strip()
+                        ),
+                        "date": (
+                            date
+                            or timezone.localdate()
+                        ),
+                        "size": size,
+                        "source": source,
+                        "source_id": str(
+                            source_id
+                        ).strip(),
+                    },
+                )
+            )
     except IntegrityError:
         win = Win.objects.get(
             user=user,
@@ -285,14 +295,41 @@ def create_daily_log_win(
     *,
     daily_log,
     title: str,
-    suggestion_id: str,
+    suggestion_key: str,
+    suggestion_id: Optional[str] = None,
     size: str = Win.SMALL,
     description: str = "",
 ) -> tuple[Win, bool]:
     """
     Создаёт победу после подтверждения AI-предложения
     из конкретной записи Daily Log.
+
+    suggestion_id используется только для поиска побед,
+    созданных старой версией event_key. Новые победы всегда
+    получают стабильный ключ DailyLogSuggestion.
     """
+    if suggestion_id is not None:
+        legacy_event_key = (
+            f"daily_log:{daily_log.id}:"
+            f"win:{suggestion_id}"
+        )
+
+        legacy_win = (
+            Win.objects
+            .filter(
+                user=daily_log.user,
+                source=Win.DAILY_LOG,
+                source_id=str(
+                    daily_log.id
+                ),
+                event_key=legacy_event_key,
+            )
+            .first()
+        )
+
+        if legacy_win is not None:
+            return legacy_win, False
+
     return create_automatic_win(
         user=daily_log.user,
         title=title,
@@ -303,7 +340,7 @@ def create_daily_log_win(
         source_id=str(daily_log.id),
         event_key=(
             f"daily_log:{daily_log.id}:"
-            f"win:{suggestion_id}"
+            f"win:{suggestion_key}"
         ),
     )
 

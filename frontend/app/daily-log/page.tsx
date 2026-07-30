@@ -22,6 +22,37 @@ interface DailyLog {
   updated_at: string;
 }
 
+type SuggestionSize =
+  | "small"
+  | "medium"
+  | "large";
+
+interface DailyLogSuggestion {
+  id: number;
+  daily_log: number;
+  suggestion_type: "win";
+  type_label: string;
+  title: string;
+  description: string;
+  size: SuggestionSize;
+  size_label: string;
+  status:
+    | "pending"
+    | "accepted"
+    | "dismissed";
+  status_label: string;
+  suggestion_key: string;
+  resolved_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface AnalyzeResponse {
+  daily_log: number;
+  suggestions: DailyLogSuggestion[];
+  suggestions_count: number;
+}
+
 interface TimelineEntry {
   date: string;
   log: DailyLog | null;
@@ -31,6 +62,11 @@ type SaveState =
   | "idle"
   | "saving"
   | "saved"
+  | "error";
+
+type AnalysisState =
+  | "idle"
+  | "loading"
   | "error";
 
 const API_URL =
@@ -219,6 +255,28 @@ export default function DailyLogPage() {
     setShowDeleteConfirm,
   ] = useState(false);
 
+  const [
+    suggestions,
+    setSuggestions,
+  ] = useState<DailyLogSuggestion[]>(
+    []
+  );
+
+  const [
+    analysisState,
+    setAnalysisState,
+  ] = useState<AnalysisState>("idle");
+
+  const [
+    analysisError,
+    setAnalysisError,
+  ] = useState("");
+
+  const [
+    resolvingSuggestionId,
+    setResolvingSuggestionId,
+  ] = useState<number | null>(null);
+
   const hasUnsavedChanges =
     content !== originalContent;
 
@@ -291,6 +349,97 @@ export default function DailyLogPage() {
     []
   );
 
+  const loadSuggestions = useCallback(
+    async (logId: number) => {
+      try {
+        setAnalysisError("");
+
+        const response = await apiFetch(
+          `${API_URL}?id=${logId}&action=suggestions`
+        );
+
+        const data: unknown =
+          await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            getErrorMessage(data)
+          );
+        }
+
+        setSuggestions(
+          Array.isArray(data)
+            ? (data as DailyLogSuggestion[])
+            : []
+        );
+      } catch (loadError) {
+        console.error(
+          "Daily Log suggestions error:",
+          loadError
+        );
+
+        setSuggestions([]);
+        setAnalysisError(
+          loadError instanceof Error
+            ? loadError.message
+            : "Unable to load suggestions."
+        );
+      }
+    },
+    []
+  );
+
+  const analyzeLog = useCallback(
+    async (logId: number) => {
+      try {
+        setAnalysisState("loading");
+        setAnalysisError("");
+
+        const response = await apiFetch(
+          `${API_URL}?id=${logId}&action=analyze`,
+          {
+            method: "POST",
+          }
+        );
+
+        const data: unknown =
+          await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            getErrorMessage(data)
+          );
+        }
+
+        const result =
+          data as AnalyzeResponse;
+
+        setSuggestions(
+          Array.isArray(
+            result.suggestions
+          )
+            ? result.suggestions
+            : []
+        );
+
+        setAnalysisState("idle");
+      } catch (analysisRequestError) {
+        console.error(
+          "Daily Log analysis error:",
+          analysisRequestError
+        );
+
+        setAnalysisState("error");
+        setAnalysisError(
+          analysisRequestError instanceof Error
+            ? analysisRequestError.message
+            : "Analysis is temporarily unavailable."
+        );
+      }
+    },
+    []
+  );
+
   const loadSelectedLog = useCallback(
     async (date: string) => {
       try {
@@ -298,6 +447,10 @@ export default function DailyLogPage() {
         setError("");
         setSaveState("idle");
         setShowDeleteConfirm(false);
+        setSuggestions([]);
+        setAnalysisState("idle");
+        setAnalysisError("");
+        setResolvingSuggestionId(null);
 
         const response = await apiFetch(
           `${API_URL}?date=${date}`
@@ -326,6 +479,10 @@ export default function DailyLogPage() {
         setOriginalContent(
           log.content
         );
+
+        await loadSuggestions(
+          log.id
+        );
       } catch (loadError) {
         console.error(
           "Daily Log loading error:",
@@ -341,7 +498,7 @@ export default function DailyLogPage() {
         setIsLoading(false);
       }
     },
-    []
+    [loadSuggestions]
   );
 
   useEffect(() => {
@@ -461,6 +618,10 @@ export default function DailyLogPage() {
 
       await loadHistory();
 
+      await analyzeLog(
+        savedLog.id
+      );
+
       window.setTimeout(() => {
         setSaveState((state) =>
           state === "saved"
@@ -519,6 +680,10 @@ export default function DailyLogPage() {
       setOriginalContent("");
       setSaveState("idle");
       setShowDeleteConfirm(false);
+      setSuggestions([]);
+      setAnalysisState("idle");
+      setAnalysisError("");
+      setResolvingSuggestionId(null);
 
       await loadHistory();
     } catch (deleteError) {
@@ -529,6 +694,62 @@ export default function DailyLogPage() {
 
       setError(
         "Unable to delete this entry."
+      );
+    }
+  }
+
+  async function handleSuggestionAction(
+    suggestionId: number,
+    action: "accept" | "dismiss"
+  ) {
+    try {
+      setResolvingSuggestionId(
+        suggestionId
+      );
+      setAnalysisError("");
+
+      const response = await apiFetch(
+        `${API_URL}?suggestion_id=${suggestionId}&action=${action}`,
+        {
+          method: "POST",
+        }
+      );
+
+      let data: unknown = null;
+
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          getErrorMessage(data)
+        );
+      }
+
+      setSuggestions((current) =>
+        current.filter(
+          (suggestion) =>
+            suggestion.id !==
+            suggestionId
+        )
+      );
+    } catch (actionError) {
+      console.error(
+        "Daily Log suggestion action error:",
+        actionError
+      );
+
+      setAnalysisError(
+        actionError instanceof Error
+          ? actionError.message
+          : "Unable to update this suggestion."
+      );
+    } finally {
+      setResolvingSuggestionId(
+        null
       );
     }
   }
@@ -642,6 +863,15 @@ export default function DailyLogPage() {
 
                       setError("");
                       setSaveState("idle");
+
+                      if (
+                        suggestions.length > 0
+                      ) {
+                        setSuggestions([]);
+                      }
+
+                      setAnalysisError("");
+                      setAnalysisState("idle");
                     }}
                     onKeyDown={
                       handleEditorKeyDown
@@ -736,6 +966,169 @@ export default function DailyLogPage() {
                   </button>
                 </div>
               </footer>
+
+              {!isLoading &&
+                currentLog &&
+                !hasUnsavedChanges && (
+                  <section
+                    className="daily-log-suggestions"
+                    aria-label="Daily Log suggestions"
+                  >
+                    {analysisState ===
+                      "loading" && (
+                      <div className="daily-log-analysis-status">
+                        <span className="daily-log-analysis-pulse" />
+
+                        <div>
+                          <strong>
+                            Looking through the entry
+                          </strong>
+
+                          <span>
+                            Checking for completed wins.
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {analysisState !==
+                      "loading" &&
+                      suggestions.length >
+                        0 && (
+                        <div className="daily-log-suggestion-list">
+                          <div className="daily-log-suggestion-heading">
+                            <span>
+                              Found in this entry
+                            </span>
+
+                            <strong>
+                              {
+                                suggestions.length
+                              }
+                            </strong>
+                          </div>
+
+                          {suggestions.map(
+                            (suggestion) => {
+                              const isResolving =
+                                resolvingSuggestionId ===
+                                suggestion.id;
+
+                              return (
+                                <article
+                                  key={
+                                    suggestion.id
+                                  }
+                                  className={`daily-log-suggestion daily-log-suggestion-${suggestion.size}`}
+                                >
+                                  <span className="daily-log-suggestion-mark">
+                                    Win
+                                  </span>
+
+                                  <div className="daily-log-suggestion-copy">
+                                    <h3>
+                                      {
+                                        suggestion.title
+                                      }
+                                    </h3>
+
+                                    {suggestion.description && (
+                                      <p>
+                                        {
+                                          suggestion.description
+                                        }
+                                      </p>
+                                    )}
+
+                                    <span className="daily-log-suggestion-size">
+                                      {
+                                        suggestion.size_label
+                                      }
+                                    </span>
+                                  </div>
+
+                                  <div className="daily-log-suggestion-actions">
+                                    <button
+                                      type="button"
+                                      className="daily-log-suggestion-dismiss"
+                                      disabled={
+                                        isResolving
+                                      }
+                                      onClick={() =>
+                                        handleSuggestionAction(
+                                          suggestion.id,
+                                          "dismiss"
+                                        )
+                                      }
+                                    >
+                                      Dismiss
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      className="daily-log-suggestion-accept"
+                                      disabled={
+                                        isResolving
+                                      }
+                                      onClick={() =>
+                                        handleSuggestionAction(
+                                          suggestion.id,
+                                          "accept"
+                                        )
+                                      }
+                                    >
+                                      {isResolving
+                                        ? "Working"
+                                        : "Add to My Wins"}
+                                    </button>
+                                  </div>
+                                </article>
+                              );
+                            }
+                          )}
+                        </div>
+                      )}
+
+                    {analysisState !==
+                      "loading" &&
+                      suggestions.length ===
+                        0 && (
+                        <div className="daily-log-analysis-empty">
+                          <span>
+                            {analysisState ===
+                            "error"
+                              ? analysisError
+                              : "No pending win suggestions."}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              analyzeLog(
+                                currentLog.id
+                              )
+                            }
+                          >
+                            {analysisState ===
+                            "error"
+                              ? "Try again"
+                              : "Check entry"}
+                          </button>
+                        </div>
+                      )}
+
+                    {analysisError &&
+                      analysisState !==
+                        "error" && (
+                        <p
+                          className="daily-log-analysis-error"
+                          role="alert"
+                        >
+                          {analysisError}
+                        </p>
+                      )}
+                  </section>
+                )}
 
               {error && (
                 <p

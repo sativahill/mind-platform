@@ -3,7 +3,11 @@
 import "./home.css";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { apiFetch } from "@/lib/api";
 import ProtectedLayout from "@/components/ProtectedLayout";
@@ -13,9 +17,13 @@ interface LastDailyLog {
   content: string;
 }
 
-interface LastWin {
+interface RandomWin {
+  id: number;
   title: string;
+  description: string;
+  date: string;
   size: string;
+  source: string;
 }
 
 interface PrimaryGoal {
@@ -47,7 +55,7 @@ interface HomeData {
   daily_logs_count: number;
   wins_count: number;
   last_daily_log: LastDailyLog | null;
-  last_win: LastWin | null;
+  random_win: RandomWin | null;
   goals: GoalsData;
   habits: HabitsData;
 }
@@ -64,14 +72,54 @@ interface BrainNode {
     | "bottom-right";
 }
 
-function shortenText(value: string, maxLength: number) {
-  const normalized = value.trim().replace(/\s+/g, " ");
+function shortenText(
+  value: string,
+  maxLength: number
+) {
+  const normalized = value
+    .trim()
+    .replace(/\s+/g, " ");
 
   if (normalized.length <= maxLength) {
     return normalized;
   }
 
-  return `${normalized.slice(0, maxLength).trim()}…`;
+  return `${normalized
+    .slice(0, maxLength)
+    .trim()}…`;
+}
+
+function parseApiDate(value: string) {
+  const [year, month, day] = value
+    .split("-")
+    .map(Number);
+
+  return new Date(
+    year,
+    month - 1,
+    day
+  );
+}
+
+function formatWinDate(value: string) {
+  return new Intl.DateTimeFormat(
+    "en-US",
+    {
+      day: "numeric",
+      month: "short",
+    }
+  ).format(parseApiDate(value));
+}
+
+function formatWinSize(value: string) {
+  if (!value) {
+    return "";
+  }
+
+  return (
+    value.charAt(0).toUpperCase() +
+    value.slice(1)
+  );
 }
 
 function BrainVisual() {
@@ -102,11 +150,13 @@ function BrainVisual() {
               stopColor="#d6cbff"
               stopOpacity="0.96"
             />
+
             <stop
               offset="0.5"
               stopColor="#9278f5"
               stopOpacity="0.88"
             />
+
             <stop
               offset="1"
               stopColor="#6248d0"
@@ -126,11 +176,13 @@ function BrainVisual() {
               stopColor="#8b70f2"
               stopOpacity="0.16"
             />
+
             <stop
               offset="0.7"
               stopColor="#493783"
               stopOpacity="0.05"
             />
+
             <stop
               offset="1"
               stopColor="#15121d"
@@ -145,7 +197,9 @@ function BrainVisual() {
             width="200%"
             height="200%"
           >
-            <feGaussianBlur stdDeviation="5" />
+            <feGaussianBlur
+              stdDeviation="5"
+            />
           </filter>
         </defs>
 
@@ -272,12 +326,41 @@ function BrainVisual() {
         />
 
         <g className="brain-signals">
-          <circle cx="112" cy="36" r="3" />
-          <circle cx="32" cy="112" r="3" />
-          <circle cx="100" cy="267" r="3" />
-          <circle cx="248" cy="36" r="3" />
-          <circle cx="328" cy="112" r="3" />
-          <circle cx="260" cy="267" r="3" />
+          <circle
+            cx="112"
+            cy="36"
+            r="3"
+          />
+
+          <circle
+            cx="32"
+            cy="112"
+            r="3"
+          />
+
+          <circle
+            cx="100"
+            cy="267"
+            r="3"
+          />
+
+          <circle
+            cx="248"
+            cy="36"
+            r="3"
+          />
+
+          <circle
+            cx="328"
+            cy="112"
+            r="3"
+          />
+
+          <circle
+            cx="260"
+            cy="267"
+            r="3"
+          />
         </g>
       </svg>
 
@@ -293,9 +376,14 @@ function BrainVisual() {
 }
 
 export default function HomePage() {
-  const [data, setData] = useState<HomeData | null>(null);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] =
+    useState<HomeData | null>(null);
+
+  const [error, setError] =
+    useState("");
+
+  const [isLoading, setIsLoading] =
+    useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -304,9 +392,10 @@ export default function HomePage() {
       try {
         setError("");
 
-        const response = await apiFetch(
-          "http://127.0.0.1:8000/api/home/"
-        );
+        const response =
+          await apiFetch(
+            "http://127.0.0.1:8000/api/home/"
+          );
 
         if (!response.ok) {
           throw new Error(
@@ -314,16 +403,22 @@ export default function HomePage() {
           );
         }
 
-        const result: HomeData = await response.json();
+        const result: HomeData =
+          await response.json();
 
         if (isMounted) {
           setData(result);
         }
       } catch (loadError) {
-        console.error("Home loading error:", loadError);
+        console.error(
+          "Home loading error:",
+          loadError
+        );
 
         if (isMounted) {
-          setError("Your home could not be loaded.");
+          setError(
+            "Your home could not be loaded."
+          );
         }
       } finally {
         if (isMounted) {
@@ -339,30 +434,58 @@ export default function HomePage() {
     };
   }, []);
 
-  const nodes = useMemo<BrainNode[]>(() => {
-    const latestLog = data?.last_daily_log;
-    const primaryGoal = data?.goals.primary;
-    const latestWin = data?.last_win;
-    const latestHabit = data?.habits.latest;
+  const nodes = useMemo<
+    BrainNode[]
+  >(() => {
+    const latestLog =
+      data?.last_daily_log;
+
+    const primaryGoal =
+      data?.goals.primary;
+
+    const randomWin =
+      data?.random_win;
+
+    const latestHabit =
+      data?.habits.latest;
+
+    const randomWinDetail =
+      randomWin
+        ? `${shortenText(
+            randomWin.title,
+            30
+          )} · ${formatWinSize(
+            randomWin.size
+          )} · ${formatWinDate(
+            randomWin.date
+          )}`
+        : "No win recorded yet";
 
     return [
       {
         href: "/daily-log",
         title: "Daily Log",
-        value: `${data?.daily_logs_count ?? 0} ${
+        value: `${
+          data?.daily_logs_count ?? 0
+        } ${
           data?.daily_logs_count === 1
             ? "entry"
             : "entries"
         }`,
         detail: latestLog
-          ? shortenText(latestLog.content, 44)
+          ? shortenText(
+              latestLog.content,
+              44
+            )
           : "Nothing written yet",
         position: "top-left",
       },
       {
         href: "/goals",
         title: "Goals",
-        value: `${data?.goals.active_count ?? 0} active`,
+        value: `${
+          data?.goals.active_count ?? 0
+        } active`,
         detail: primaryGoal
           ? `${primaryGoal.title} · ${primaryGoal.progress}%`
           : "No active goal",
@@ -371,17 +494,21 @@ export default function HomePage() {
       {
         href: "/wins",
         title: "My Wins",
-        value: `${data?.wins_count ?? 0} recorded`,
-        detail: latestWin
-          ? latestWin.title
-          : "No win recorded yet",
+        value: `${
+          data?.wins_count ?? 0
+        } recorded`,
+        detail: randomWinDetail,
         position: "bottom-left",
       },
       {
         href: "/habits",
         title: "Habits",
-        value: `${data?.habits.completed_today ?? 0}/${
-          data?.habits.active_count ?? 0
+        value: `${
+          data?.habits
+            .completed_today ?? 0
+        }/${
+          data?.habits
+            .active_count ?? 0
         } today`,
         detail: latestHabit
           ? `${latestHabit.title} · ${latestHabit.streak} day streak`
@@ -423,7 +550,9 @@ export default function HomePage() {
 
               <button
                 type="button"
-                onClick={() => window.location.reload()}
+                onClick={() =>
+                  window.location.reload()
+                }
               >
                 Try again
               </button>
@@ -503,10 +632,29 @@ export default function HomePage() {
                   stroke="url(#connectionGradientRight)"
                 />
 
-                <circle cx="480" cy="255" r="3" />
-                <circle cx="720" cy="255" r="3" />
-                <circle cx="480" cy="465" r="3" />
-                <circle cx="720" cy="465" r="3" />
+                <circle
+                  cx="480"
+                  cy="255"
+                  r="3"
+                />
+
+                <circle
+                  cx="720"
+                  cy="255"
+                  r="3"
+                />
+
+                <circle
+                  cx="480"
+                  cy="465"
+                  r="3"
+                />
+
+                <circle
+                  cx="720"
+                  cy="465"
+                  r="3"
+                />
               </svg>
 
               <div className="brain-core">
@@ -520,7 +668,9 @@ export default function HomePage() {
                   className={`brain-node brain-node-${node.position}`}
                 >
                   <div className="brain-node-heading">
-                    <h2>{node.title}</h2>
+                    <h2>
+                      {node.title}
+                    </h2>
 
                     <span aria-hidden="true">
                       ↗
