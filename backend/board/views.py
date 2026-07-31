@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from goals.models import Goal
+from goals.services import recalculate_goal_progress
 
 from .models import BoardTask
 from .serializers import BoardTaskSerializer
@@ -23,7 +24,9 @@ class BoardTaskView(APIView):
             many=True,
         )
 
-        return Response(serializer.data)
+        return Response(
+            serializer.data
+        )
 
     def post(self, request):
         serializer = BoardTaskSerializer(
@@ -34,7 +37,8 @@ class BoardTaskView(APIView):
             raise_exception=True
         )
 
-        goal = Goal.objects.get(
+        goal = get_object_or_404(
+            Goal,
             id=serializer.validated_data["goal"].id,
             user=request.user,
         )
@@ -50,6 +54,10 @@ class BoardTaskView(APIView):
                 "status",
                 BoardTask.TODO,
             ),
+        )
+
+        recalculate_goal_progress(
+            goal
         )
 
         return Response(
@@ -68,46 +76,35 @@ class BoardTaskDetailView(APIView):
             goal__user=request.user,
         )
 
-        status = request.data.get(
+        task_status = request.data.get(
             "status"
         )
 
-        if status not in [
+        if task_status not in [
             BoardTask.TODO,
             BoardTask.IN_PROGRESS,
             BoardTask.DONE,
         ]:
             return Response(
                 {
-                    "detail":
-                    "Invalid status."
+                    "detail": (
+                        "Invalid status."
+                    )
                 },
                 status=400,
             )
 
-        task.status = status
-        task.save()
+        task.status = task_status
 
-        goal = task.goal
+        task.save(
+            update_fields=[
+                "status",
+            ]
+        )
 
-        total_tasks = BoardTask.objects.filter(
-            goal=goal
-        ).count()
-
-        done_tasks = BoardTask.objects.filter(
-            goal=goal,
-            status=BoardTask.DONE,
-        ).count()
-
-        if total_tasks > 0:
-            goal.progress = int(
-                (done_tasks / total_tasks)
-                * 100
-            )
-        else:
-            goal.progress = 0
-
-        goal.save()
+        recalculate_goal_progress(
+            task.goal
+        )
 
         return Response(
             BoardTaskSerializer(task).data
