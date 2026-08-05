@@ -1,9 +1,11 @@
 from django.urls import path
 
 from .views import (
-    BoardTaskView,
     BoardTaskDetailView,
+    BoardTaskLayoutView,
+    BoardTaskView,
 )
+
 
 urlpatterns = [
     path(
@@ -11,7 +13,11 @@ urlpatterns = [
         BoardTaskView.as_view(),
         name="board",
     ),
-
+    path(
+        "layout/",
+        BoardTaskLayoutView.as_view(),
+        name="board-layout",
+    ),
     path(
         "<int:task_id>/",
         BoardTaskDetailView.as_view(),
