@@ -80,11 +80,13 @@ class HabitSerializer(
         - missed
         - pending
 
-        Missing database records are treated as pending here.
-        The backend does not automatically convert old empty days
-        into missed records.
+        Missing past records are treated as missed. Today and days
+        before the habit was created remain pending.
         """
         today = timezone.localdate()
+        created_date = timezone.localtime(
+            habit.created_at
+        ).date()
         start_date = (
             today
             - timedelta(days=6)
@@ -114,13 +116,25 @@ class HabitSerializer(
                 + timedelta(days=offset)
             )
 
+            if current_date < created_date:
+                day_status = "pending"
+            else:
+                default_status = "pending"
+
+                if current_date < today:
+                    default_status = (
+                        HabitCompletion.Status.MISSED
+                    )
+
+                day_status = completions.get(
+                    current_date,
+                    default_status,
+                )
+
             days.append(
                 {
                     "date": current_date,
-                    "status": completions.get(
-                        current_date,
-                        "pending",
-                    ),
+                    "status": day_status,
                 }
             )
 

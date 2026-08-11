@@ -51,6 +51,11 @@ class HabitView(APIView):
                 status=status_filter
             )
 
+        habits = list(habits)
+
+        for habit in habits:
+            habit.refresh_streak()
+
         serializer = HabitSerializer(
             habits,
             many=True,
@@ -109,6 +114,8 @@ class HabitDetailView(APIView):
             request,
             habit_id,
         )
+
+        habit.refresh_streak()
 
         return Response(
             HabitSerializer(

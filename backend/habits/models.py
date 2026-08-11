@@ -117,6 +117,9 @@ class Habit(models.Model):
         -> streak = 1
         """
         today = timezone.localdate()
+        created_date = timezone.localtime(
+            self.created_at
+        ).date()
 
         records = {
             record.completed_at: record.status
@@ -146,10 +149,13 @@ class Habit(models.Model):
 
         streak = 0
 
-        while (
-            records.get(cursor)
-            == HabitCompletion.Status.COMPLETED
-        ):
+        while cursor >= created_date:
+            if (
+                records.get(cursor)
+                != HabitCompletion.Status.COMPLETED
+            ):
+                break
+
             streak += 1
             cursor -= timedelta(days=1)
 
@@ -173,12 +179,17 @@ class Habit(models.Model):
 
     def consecutive_misses(self):
         """
-        Number of explicit consecutive missed days.
+        Number of consecutive missed days.
 
         Pending today is ignored, so during the current day
-        yesterday's miss chain is still visible.
+        yesterday's miss chain is still visible. Missing records
+        before today count as missed, but days before the habit was
+        created do not.
         """
         today = timezone.localdate()
+        created_date = timezone.localtime(
+            self.created_at
+        ).date()
 
         records = {
             record.completed_at: record.status
@@ -206,10 +217,13 @@ class Habit(models.Model):
 
         missed = 0
 
-        while (
-            records.get(cursor)
-            == HabitCompletion.Status.MISSED
-        ):
+        while cursor >= created_date:
+            if (
+                records.get(cursor)
+                == HabitCompletion.Status.COMPLETED
+            ):
+                break
+
             missed += 1
             cursor -= timedelta(days=1)
 

@@ -1,7 +1,8 @@
-from datetime import date, timedelta
+from datetime import date, datetime, time, timedelta
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -86,7 +87,7 @@ class HabitAPITestCase(APITestCase):
         reward="Make coffee",
         status_value=Habit.Status.ACTIVE,
     ):
-        return Habit.objects.create(
+        habit = Habit.objects.create(
             user=user or self.user,
             title=title,
             trigger=trigger,
@@ -94,6 +95,33 @@ class HabitAPITestCase(APITestCase):
             reward=reward,
             status=status_value,
         )
+
+        self.set_habit_created_date(
+            habit,
+            timezone.localdate(),
+        )
+
+        return habit
+
+    def set_habit_created_date(
+        self,
+        habit,
+        created_date,
+    ):
+        created_at = timezone.make_aware(
+            datetime.combine(
+                created_date,
+                time.min,
+            )
+        )
+
+        Habit.objects.filter(
+            pk=habit.pk
+        ).update(
+            created_at=created_at
+        )
+
+        habit.created_at = created_at
 
     def create_completion(
         self,
@@ -103,6 +131,12 @@ class HabitAPITestCase(APITestCase):
             HabitCompletion.Status.COMPLETED
         ),
     ):
+        if habit.created_at.date() > completion_date:
+            self.set_habit_created_date(
+                habit,
+                completion_date,
+            )
+
         return HabitCompletion.objects.create(
             habit=habit,
             completed_at=completion_date,
@@ -1061,6 +1095,56 @@ class HabitAPITestCase(APITestCase):
 
     @patch(
         "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 11),
+    )
+    def test_past_missing_day_breaks_streak(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+
+        self.create_completion(
+            habit,
+            date(2026, 8, 8),
+        )
+
+        self.create_completion(
+            habit,
+            date(2026, 8, 9),
+        )
+
+        self.assertEqual(
+            habit.calculate_streak(),
+            0,
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 11),
+    )
+    def test_pending_today_preserves_previous_streak(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+
+        self.create_completion(
+            habit,
+            date(2026, 8, 9),
+        )
+
+        self.create_completion(
+            habit,
+            date(2026, 8, 10),
+        )
+
+        self.assertEqual(
+            habit.calculate_streak(),
+            2,
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
         return_value=date(2026, 8, 10),
     )
     def test_complete_endpoint_refreshes_persisted_streak(
@@ -1187,6 +1271,26 @@ class HabitAPITestCase(APITestCase):
             0,
         )
 
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 11),
+    )
+    def test_missing_past_days_count_as_consecutive_misses(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+
+        self.create_completion(
+            habit,
+            date(2026, 8, 8),
+        )
+
+        self.assertEqual(
+            habit.consecutive_misses(),
+            2,
+        )
+
     # ---------------------------------------------------------
     # Recent days
     # ---------------------------------------------------------
@@ -1277,6 +1381,135 @@ class HabitAPITestCase(APITestCase):
         self.assertEqual(
             statuses["2026-08-10"],
             "pending",
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 11),
+    )
+    def test_recent_days_marks_past_empty_day_as_missed(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+        self.set_habit_created_date(
+            habit,
+            date(2026, 8, 10),
+        )
+
+        response = self.client.get(
+            self.habit_detail_url(
+                habit.id
+            )
+        )
+
+        statuses = {
+            item["date"]: item["status"]
+            for item in response.data["recent_days"]
+        }
+
+        self.assertEqual(
+            statuses["2026-08-10"],
+            "missed",
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 11),
+    )
+    def test_today_without_record_stays_pending(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+
+        response = self.client.get(
+            self.habit_detail_url(
+                habit.id
+            )
+        )
+
+        statuses = {
+            item["date"]: item["status"]
+            for item in response.data["recent_days"]
+        }
+
+        self.assertEqual(
+            statuses["2026-08-11"],
+            "pending",
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 11),
+    )
+    def test_days_before_habit_creation_are_not_missed(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+        self.set_habit_created_date(
+            habit,
+            date(2026, 8, 10),
+        )
+
+        response = self.client.get(
+            self.habit_detail_url(
+                habit.id
+            )
+        )
+
+        statuses = {
+            item["date"]: item["status"]
+            for item in response.data["recent_days"]
+        }
+
+        self.assertEqual(
+            statuses["2026-08-08"],
+            "pending",
+        )
+
+        self.assertEqual(
+            statuses["2026-08-09"],
+            "pending",
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 11),
+    )
+    def test_list_get_refreshes_persisted_streak(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+
+        self.create_completion(
+            habit,
+            date(2026, 8, 9),
+        )
+
+        habit.streak = 5
+        habit.save(
+            update_fields=[
+                "streak",
+            ]
+        )
+
+        response = self.client.get(
+            self.HABITS_URL
+        )
+
+        habit.refresh_from_db()
+
+        self.assertEqual(
+            response.data[0]["streak"],
+            0,
+        )
+
+        self.assertEqual(
+            habit.streak,
+            0,
         )
 
     # ---------------------------------------------------------
