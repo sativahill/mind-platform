@@ -58,4 +58,7 @@ class Message(models.Model):
         ordering = ["created_at"]
 
     def __str__(self):
-        return f"{self.role}: {self.content[:50]}"
+        return (
+            f"{self.role}: "
+            f"{self.content[:50]}"
+        )

@@ -1,6 +1,9 @@
 from django.urls import path
 
-from .views import ChatView, MessageView
+from .views import (
+    ChatView,
+    MessageView,
+)
 
 
 urlpatterns = [

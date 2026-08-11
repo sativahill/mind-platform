@@ -20,6 +20,16 @@ class ChatSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
+    def validate_title(self, value):
+        title = value.strip()
+
+        if not title:
+            raise serializers.ValidationError(
+                "Chat title cannot be empty."
+            )
+
+        return title
+
 
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,3 +47,13 @@ class MessageSerializer(serializers.ModelSerializer):
             "role",
             "created_at",
         )
+
+    def validate_content(self, value):
+        content = value.strip()
+
+        if not content:
+            raise serializers.ValidationError(
+                "Message cannot be empty."
+            )
+
+        return content
