@@ -132,9 +132,7 @@ function extractApiError(
       return;
     }
 
-    if (
-      Array.isArray(value)
-    ) {
+    if (Array.isArray(value)) {
       value.forEach(collect);
       return;
     }
@@ -192,7 +190,24 @@ function getDayName(
     }
   )
     .format(date)
-    .slice(0, 3);
+    .slice(0, 1)
+    .toUpperCase();
+}
+
+
+function getFullDayName(
+  dateValue: string
+) {
+  const date = new Date(
+    `${dateValue}T12:00:00`
+  );
+
+  return new Intl.DateTimeFormat(
+    "en",
+    {
+      weekday: "short",
+    }
+  ).format(date);
 }
 
 
@@ -217,6 +232,7 @@ function getTodayLabel() {
   return new Intl.DateTimeFormat(
     "en",
     {
+      weekday: "long",
       month: "long",
       day: "numeric",
     }
@@ -228,14 +244,10 @@ function getStreakLabel(
   streak: number
 ) {
   if (streak <= 0) {
-    return "Start your streak today";
+    return "0";
   }
 
-  if (streak === 1) {
-    return "1 day streak";
-  }
-
-  return `${streak} day streak`;
+  return String(streak);
 }
 
 
@@ -272,14 +284,11 @@ export default function HabitsPage() {
   );
 
   const [
-    pageError,
-    setPageError,
-  ] = useState("");
-
-  const [
-    formError,
-    setFormError,
-  ] = useState("");
+    changingHabitId,
+    setChangingHabitId,
+  ] = useState<number | null>(
+    null
+  );
 
   const [
     selectedHabitId,
@@ -289,8 +298,8 @@ export default function HabitsPage() {
   );
 
   const [
-    changingHabitId,
-    setChangingHabitId,
+    deleteHabitId,
+    setDeleteHabitId,
   ] = useState<number | null>(
     null
   );
@@ -313,11 +322,14 @@ export default function HabitsPage() {
   );
 
   const [
-    deleteHabitId,
-    setDeleteHabitId,
-  ] = useState<number | null>(
-    null
-  );
+    pageError,
+    setPageError,
+  ] = useState("");
+
+  const [
+    formError,
+    setFormError,
+  ] = useState("");
 
 
   const selectedHabit =
@@ -517,9 +529,9 @@ export default function HabitsPage() {
       habitId
     );
 
+    setIsCreateOpen(false);
     setIsEditing(false);
     setFormError("");
-    setIsCreateOpen(false);
   }
 
 
@@ -543,12 +555,6 @@ export default function HabitsPage() {
 
     setFormError("");
     setIsEditing(true);
-  }
-
-
-  function cancelEditing() {
-    setIsEditing(false);
-    setFormError("");
   }
 
 
@@ -584,10 +590,7 @@ export default function HabitsPage() {
       return;
     }
 
-    setRequestState(
-      "saving"
-    );
-
+    setRequestState("saving");
     setFormError("");
 
     try {
@@ -638,20 +641,14 @@ export default function HabitsPage() {
       );
 
       setActiveTab("active");
-
-      setDraft(
-        EMPTY_DRAFT
-      );
-
+      setDraft(EMPTY_DRAFT);
       setIsCreateOpen(false);
     } catch (error) {
       setFormError(
         getErrorMessage(error)
       );
     } finally {
-      setRequestState(
-        "idle"
-      );
+      setRequestState("idle");
     }
   }
 
@@ -675,10 +672,7 @@ export default function HabitsPage() {
       return;
     }
 
-    setRequestState(
-      "saving"
-    );
-
+    setRequestState("saving");
     setFormError("");
 
     try {
@@ -737,22 +731,17 @@ export default function HabitsPage() {
         getErrorMessage(error)
       );
     } finally {
-      setRequestState(
-        "idle"
-      );
+      setRequestState("idle");
     }
   }
 
 
-  async function updateToday(
-    habit: Habit,
-    nextState:
-      | "complete"
-      | "miss"
+  async function completeHabit(
+    habit: Habit
   ) {
     if (
-      habit.status
-      !== "active"
+      habit.status !== "active"
+      || habit.today_status === "completed"
     ) {
       return;
     }
@@ -766,7 +755,7 @@ export default function HabitsPage() {
     try {
       const response =
         await apiFetch(
-          `${HABITS_API_URL}${habit.id}/${nextState}/`,
+          `${HABITS_API_URL}${habit.id}/complete/`,
           {
             method: "POST",
           }
@@ -781,7 +770,67 @@ export default function HabitsPage() {
         throw new Error(
           extractApiError(
             data,
-            "Could not update today."
+            "Could not update the habit."
+          )
+        );
+      }
+
+      const updated =
+        data as Habit;
+
+      setHabits(
+        (current) =>
+          current.map(
+            (item) =>
+              item.id === updated.id
+                ? updated
+                : item
+          )
+      );
+    } catch (error) {
+      setPageError(
+        getErrorMessage(error)
+      );
+    } finally {
+      setChangingHabitId(null);
+    }
+  }
+
+
+  async function markHabitMissed(
+    habit: Habit
+  ) {
+    if (
+      habit.status !== "active"
+    ) {
+      return;
+    }
+
+    setChangingHabitId(
+      habit.id
+    );
+
+    setPageError("");
+
+    try {
+      const response =
+        await apiFetch(
+          `${HABITS_API_URL}${habit.id}/miss/`,
+          {
+            method: "POST",
+          }
+        );
+
+      const data =
+        await parseResponse(
+          response
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          extractApiError(
+            data,
+            "Could not update the habit."
           )
         );
       }
@@ -814,8 +863,6 @@ export default function HabitsPage() {
     setChangingHabitId(
       habit.id
     );
-
-    setPageError("");
 
     try {
       const response =
@@ -871,8 +918,6 @@ export default function HabitsPage() {
       habit.id
     );
 
-    setPageError("");
-
     try {
       const response =
         await apiFetch(
@@ -924,11 +969,7 @@ export default function HabitsPage() {
   async function deleteHabit(
     habit: Habit
   ) {
-    setRequestState(
-      "deleting"
-    );
-
-    setPageError("");
+    setRequestState("deleting");
 
     try {
       const response =
@@ -968,9 +1009,7 @@ export default function HabitsPage() {
         getErrorMessage(error)
       );
     } finally {
-      setRequestState(
-        "idle"
-      );
+      setRequestState("idle");
     }
   }
 
@@ -981,9 +1020,7 @@ export default function HabitsPage() {
         <section className="habits-shell">
           <header className="habits-header">
             <div className="habits-heading">
-              <span
-                className="habits-heading-dot"
-              />
+              <span className="habits-heading-dot" />
 
               <h1>
                 Habits
@@ -1051,7 +1088,6 @@ export default function HabitsPage() {
                 onClick={() =>
                   setPageError("")
                 }
-                aria-label="Dismiss error"
               >
                 ×
               </button>
@@ -1063,20 +1099,13 @@ export default function HabitsPage() {
           === "loading" ? (
             <div className="habits-loading">
               <span />
-
-              <p>
-                Loading habits
-              </p>
+              <p>Loading</p>
             </div>
           ) : (
             <>
               {activeTab
               === "active" && (
                 <div className="habits-today">
-                  <span>
-                    Today
-                  </span>
-
                   <strong>
                     {getTodayLabel()}
                   </strong>
@@ -1087,9 +1116,7 @@ export default function HabitsPage() {
               {visibleHabits.length
               === 0 ? (
                 <section className="habits-empty">
-                  <span
-                    className="habits-empty-mark"
-                  />
+                  <span className="habits-empty-mark" />
 
                   <h2>
                     {activeTab
@@ -1097,13 +1124,6 @@ export default function HabitsPage() {
                       ? "No habits yet."
                       : "No archived habits."}
                   </h2>
-
-                  <p>
-                    {activeTab
-                    === "active"
-                      ? "Build one small action you can repeat every day."
-                      : "Habits you archive will stay here."}
-                  </p>
 
                   {activeTab
                   === "active" && (
@@ -1128,14 +1148,7 @@ export default function HabitsPage() {
                           key={habit.id}
                           className={[
                             "habit-row",
-                            habit.today_status
-                            === "completed"
-                              ? "is-completed"
-                              : "",
-                            habit.today_status
-                            === "missed"
-                              ? "is-missed"
-                              : "",
+                            `today-${habit.today_status}`,
                             habit.status
                             === "archived"
                               ? "is-archived"
@@ -1144,39 +1157,45 @@ export default function HabitsPage() {
                             .filter(Boolean)
                             .join(" ")}
                         >
-                          <button
-                            type="button"
-                            className="habit-main"
-                            onClick={() =>
-                              openHabit(
-                                habit.id
-                              )
-                            }
-                          >
-                            <div className="habit-copy">
+                          <div className="habit-row-top">
+                            <button
+                              type="button"
+                              className="habit-main"
+                              onClick={() =>
+                                openHabit(
+                                  habit.id
+                                )
+                              }
+                            >
                               <h2>
-                                {
-                                  habit.title
-                                }
+                                {habit.title}
                               </h2>
 
                               <p>
                                 <span>
-                                  {
-                                    habit.trigger
-                                  }
+                                  {habit.trigger}
                                 </span>
 
                                 <i />
 
                                 <strong>
-                                  {
-                                    habit.action
-                                  }
+                                  {habit.action}
                                 </strong>
                               </p>
-                            </div>
-                          </button>
+                            </button>
+
+
+                            <strong className="habit-streak">
+                              {getStreakLabel(
+                                habit.streak
+                              )}
+                              <span>
+                                {habit.streak === 1
+                                  ? " day"
+                                  : " days"}
+                              </span>
+                            </strong>
+                          </div>
 
 
                           <div className="habit-week">
@@ -1207,9 +1226,11 @@ export default function HabitsPage() {
                                       .filter(Boolean)
                                       .join(" ")}
                                     title={
-                                      `${getShortDate(
+                                      `${getFullDayName(
                                         day.date
-                                      )} · ${day.status}`
+                                      )}, ${getShortDate(
+                                        day.date
+                                      )}`
                                     }
                                   >
                                     <span>
@@ -1234,28 +1255,7 @@ export default function HabitsPage() {
                           </div>
 
 
-                          <div className="habit-row-footer">
-                            <div className="habit-streak">
-                              <span />
-
-                              <strong>
-                                {getStreakLabel(
-                                  habit.streak
-                                )}
-                              </strong>
-
-                              {habit.consecutive_misses
-                              >= 2 && (
-                                <small>
-                                  {
-                                    habit.consecutive_misses
-                                  }{" "}
-                                  missed days
-                                </small>
-                              )}
-                            </div>
-
-
+                          <div className="habit-row-bottom">
                             {habit.status
                             === "archived" ? (
                               <button
@@ -1275,100 +1275,42 @@ export default function HabitsPage() {
                                   : "Restore"}
                               </button>
                             ) : (
-                              <div className="habit-today-actions">
-                                {habit.today_status
-                                === "pending" && (
-                                  <>
-                                    <button
-                                      type="button"
-                                      className="habit-missed-button"
-                                      disabled={
-                                        isChanging
-                                      }
-                                      onClick={() =>
-                                        void updateToday(
-                                          habit,
-                                          "miss"
-                                        )
-                                      }
-                                    >
-                                      Missed
-                                    </button>
+                              <button
+                                type="button"
+                                className={[
+                                  "habit-done-button",
+                                  habit.today_status
+                                  === "completed"
+                                    ? "is-completed"
+                                    : "",
+                                ]
+                                  .filter(Boolean)
+                                  .join(" ")}
+                                disabled={
+                                  isChanging
+                                  || habit.today_status
+                                  === "completed"
+                                }
+                                onClick={() =>
+                                  void completeHabit(
+                                    habit
+                                  )
+                                }
+                              >
+                                <span>
+                                  {habit.today_status
+                                  === "completed"
+                                    ? "✓"
+                                    : ""}
+                                </span>
 
-                                    <button
-                                      type="button"
-                                      className="habit-done-button"
-                                      disabled={
-                                        isChanging
-                                      }
-                                      onClick={() =>
-                                        void updateToday(
-                                          habit,
-                                          "complete"
-                                        )
-                                      }
-                                    >
-                                      {isChanging
-                                        ? "Saving…"
-                                        : "Done today"}
-                                    </button>
-                                  </>
-                                )}
-
-
-                                {habit.today_status
-                                === "completed" && (
-                                  <>
-                                    <span className="habit-today-state is-done">
-                                      Completed today
-                                    </span>
-
-                                    <button
-                                      type="button"
-                                      className="habit-change-state"
-                                      disabled={
-                                        isChanging
-                                      }
-                                      onClick={() =>
-                                        void updateToday(
-                                          habit,
-                                          "miss"
-                                        )
-                                      }
-                                    >
-                                      Mark missed
-                                    </button>
-                                  </>
-                                )}
-
-
-                                {habit.today_status
-                                === "missed" && (
-                                  <>
-                                    <span className="habit-today-state is-missed">
-                                      Missed today
-                                    </span>
-
-                                    <button
-                                      type="button"
-                                      className="habit-done-button"
-                                      disabled={
-                                        isChanging
-                                      }
-                                      onClick={() =>
-                                        void updateToday(
-                                          habit,
-                                          "complete"
-                                        )
-                                      }
-                                    >
-                                      {isChanging
-                                        ? "Saving…"
-                                        : "Mark done"}
-                                    </button>
-                                  </>
-                                )}
-                              </div>
+                                {isChanging
+                                  ? "Saving…"
+                                  : habit.today_status
+                                    === "completed"
+                                    ? "Done"
+                                    : "Done"}
+                              </button>
                             )}
                           </div>
                         </article>
@@ -1385,7 +1327,6 @@ export default function HabitsPage() {
         {isCreateOpen && (
           <div
             className="habit-modal-backdrop"
-            role="presentation"
             onMouseDown={(
               event
             ) => {
@@ -1398,18 +1339,14 @@ export default function HabitsPage() {
             }}
           >
             <section
-              className="habit-modal habit-create-modal"
+              className="habit-modal"
               role="dialog"
               aria-modal="true"
-              aria-labelledby="habit-create-title"
             >
               <button
                 type="button"
                 className="habit-modal-close"
-                onClick={
-                  closeCreate
-                }
-                aria-label="Close"
+                onClick={closeCreate}
               >
                 ×
               </button>
@@ -1419,22 +1356,15 @@ export default function HabitsPage() {
                   New habit
                 </span>
 
-                <h2 id="habit-create-title">
+                <h2>
                   Build something small.
                 </h2>
-
-                <p>
-                  Make it easy enough to
-                  repeat every day.
-                </p>
               </header>
 
 
               <form
                 className="habit-form"
-                onSubmit={
-                  createHabit
-                }
+                onSubmit={createHabit}
               >
                 <label>
                   <span>
@@ -1443,9 +1373,7 @@ export default function HabitsPage() {
 
                   <input
                     type="text"
-                    value={
-                      draft.title
-                    }
+                    value={draft.title}
                     onChange={(
                       event
                     ) =>
@@ -1454,7 +1382,7 @@ export default function HabitsPage() {
                         event.target.value
                       )
                     }
-                    placeholder="For example: Read every day"
+                    placeholder="Read every day"
                     autoFocus
                     maxLength={255}
                   />
@@ -1463,14 +1391,12 @@ export default function HabitsPage() {
 
                 <label>
                   <span>
-                    When will you do it?
+                    When?
                   </span>
 
                   <input
                     type="text"
-                    value={
-                      draft.trigger
-                    }
+                    value={draft.trigger}
                     onChange={(
                       event
                     ) =>
@@ -1482,25 +1408,17 @@ export default function HabitsPage() {
                     placeholder="After breakfast"
                     maxLength={255}
                   />
-
-                  <small>
-                    Choose a moment that
-                    already happens every
-                    day.
-                  </small>
                 </label>
 
 
                 <label>
                   <span>
-                    What will you do?
+                    Action
                   </span>
 
                   <input
                     type="text"
-                    value={
-                      draft.action
-                    }
+                    value={draft.action}
                     onChange={(
                       event
                     ) =>
@@ -1514,15 +1432,16 @@ export default function HabitsPage() {
                   />
 
                   <small>
-                    Make the first version
-                    take about 2 minutes.
+                    Keep it small enough
+                    to start in about
+                    2 minutes.
                   </small>
                 </label>
 
 
                 <label>
                   <span>
-                    Small reward
+                    Reward
                     <i>
                       optional
                     </i>
@@ -1530,9 +1449,7 @@ export default function HabitsPage() {
 
                   <input
                     type="text"
-                    value={
-                      draft.reward
-                    }
+                    value={draft.reward}
                     onChange={(
                       event
                     ) =>
@@ -1548,10 +1465,7 @@ export default function HabitsPage() {
 
 
                 {formError && (
-                  <div
-                    className="habit-form-error"
-                    role="alert"
-                  >
+                  <div className="habit-form-error">
                     {formError}
                   </div>
                 )}
@@ -1560,9 +1474,7 @@ export default function HabitsPage() {
                 <footer className="habit-form-actions">
                   <button
                     type="button"
-                    onClick={
-                      closeCreate
-                    }
+                    onClick={closeCreate}
                   >
                     Cancel
                   </button>
@@ -1577,7 +1489,7 @@ export default function HabitsPage() {
                     {requestState
                     === "saving"
                       ? "Creating…"
-                      : "Create habit"}
+                      : "Create"}
                   </button>
                 </footer>
               </form>
@@ -1589,7 +1501,6 @@ export default function HabitsPage() {
         {selectedHabit && (
           <div
             className="habit-modal-backdrop"
-            role="presentation"
             onMouseDown={(
               event
             ) => {
@@ -1602,35 +1513,24 @@ export default function HabitsPage() {
             }}
           >
             <section
-              className="habit-modal habit-detail-modal"
+              className="habit-modal"
               role="dialog"
               aria-modal="true"
-              aria-labelledby="habit-detail-title"
             >
               <button
                 type="button"
                 className="habit-modal-close"
-                onClick={
-                  closeHabit
-                }
-                aria-label="Close"
+                onClick={closeHabit}
               >
                 ×
               </button>
 
-
               <header className="habit-modal-header">
                 <span>
-                  {selectedHabit.status
-                  === "archived"
-                    ? "Archived habit"
-                    : selectedHabit.today_status
-                    === "completed"
-                      ? "Completed today"
-                      : "Active habit"}
+                  Habit
                 </span>
 
-                <h2 id="habit-detail-title">
+                <h2>
                   {selectedHabit.title}
                 </h2>
               </header>
@@ -1639,9 +1539,7 @@ export default function HabitsPage() {
               {isEditing ? (
                 <form
                   className="habit-form"
-                  onSubmit={
-                    saveHabit
-                  }
+                  onSubmit={saveHabit}
                 >
                   <label>
                     <span>
@@ -1650,9 +1548,7 @@ export default function HabitsPage() {
 
                     <input
                       type="text"
-                      value={
-                        draft.title
-                      }
+                      value={draft.title}
                       onChange={(
                         event
                       ) =>
@@ -1661,7 +1557,6 @@ export default function HabitsPage() {
                           event.target.value
                         )
                       }
-                      maxLength={255}
                       autoFocus
                     />
                   </label>
@@ -1669,14 +1564,12 @@ export default function HabitsPage() {
 
                   <label>
                     <span>
-                      When will you do it?
+                      When?
                     </span>
 
                     <input
                       type="text"
-                      value={
-                        draft.trigger
-                      }
+                      value={draft.trigger}
                       onChange={(
                         event
                       ) =>
@@ -1685,21 +1578,18 @@ export default function HabitsPage() {
                           event.target.value
                         )
                       }
-                      maxLength={255}
                     />
                   </label>
 
 
                   <label>
                     <span>
-                      What will you do?
+                      Action
                     </span>
 
                     <input
                       type="text"
-                      value={
-                        draft.action
-                      }
+                      value={draft.action}
                       onChange={(
                         event
                       ) =>
@@ -1708,14 +1598,13 @@ export default function HabitsPage() {
                           event.target.value
                         )
                       }
-                      maxLength={255}
                     />
                   </label>
 
 
                   <label>
                     <span>
-                      Small reward
+                      Reward
                       <i>
                         optional
                       </i>
@@ -1723,9 +1612,7 @@ export default function HabitsPage() {
 
                     <input
                       type="text"
-                      value={
-                        draft.reward
-                      }
+                      value={draft.reward}
                       onChange={(
                         event
                       ) =>
@@ -1734,16 +1621,12 @@ export default function HabitsPage() {
                           event.target.value
                         )
                       }
-                      maxLength={255}
                     />
                   </label>
 
 
                   {formError && (
-                    <div
-                      className="habit-form-error"
-                      role="alert"
-                    >
+                    <div className="habit-form-error">
                       {formError}
                     </div>
                   )}
@@ -1752,8 +1635,8 @@ export default function HabitsPage() {
                   <footer className="habit-form-actions">
                     <button
                       type="button"
-                      onClick={
-                        cancelEditing
+                      onClick={() =>
+                        setIsEditing(false)
                       }
                     >
                       Cancel
@@ -1761,35 +1644,24 @@ export default function HabitsPage() {
 
                     <button
                       type="submit"
-                      disabled={
-                        requestState
-                        === "saving"
-                      }
                     >
-                      {requestState
-                      === "saving"
-                        ? "Saving…"
-                        : "Save changes"}
+                      Save
                     </button>
                   </footer>
                 </form>
               ) : (
                 <>
                   <div className="habit-detail-body">
-                    <section className="habit-detail-plan">
+                    <div className="habit-detail-pair">
                       <div>
                         <span>
                           When
                         </span>
 
                         <strong>
-                          {
-                            selectedHabit.trigger
-                          }
+                          {selectedHabit.trigger}
                         </strong>
                       </div>
-
-                      <i />
 
                       <div>
                         <span>
@@ -1797,58 +1669,31 @@ export default function HabitsPage() {
                         </span>
 
                         <strong>
-                          {
-                            selectedHabit.action
-                          }
+                          {selectedHabit.action}
                         </strong>
                       </div>
-                    </section>
+                    </div>
 
 
-                    <section className="habit-detail-streak">
-                      <div>
-                        <span>
-                          Current streak
-                        </span>
-
-                        <strong>
-                          {
-                            selectedHabit.streak
-                          }
-                        </strong>
-
-                        <small>
-                          {selectedHabit.streak
-                          === 1
-                            ? "day"
-                            : "days"}
-                        </small>
-                      </div>
-
-                      {selectedHabit
-                        .consecutive_misses
-                      > 0 && (
-                        <div className="habit-detail-misses">
-                          <span>
-                            Recent misses
-                          </span>
-
-                          <strong>
-                            {
-                              selectedHabit
-                                .consecutive_misses
-                            }
-                          </strong>
-                        </div>
-                      )}
-                    </section>
-
-
-                    <section className="habit-detail-week">
+                    <div className="habit-detail-streak">
                       <span>
-                        This week
+                        Streak
                       </span>
 
+                      <strong>
+                        {selectedHabit.streak}
+                      </strong>
+
+                      <small>
+                        {selectedHabit.streak
+                        === 1
+                          ? "day"
+                          : "days"}
+                      </small>
+                    </div>
+
+
+                    <div className="habit-detail-week">
                       <div>
                         {selectedHabit
                           .recent_days
@@ -1856,64 +1701,113 @@ export default function HabitsPage() {
                             (
                               day,
                               index
-                            ) => {
-                              const isToday =
-                                index
-                                === selectedHabit
-                                  .recent_days
-                                  .length
-                                  - 1;
-
-                              return (
-                                <div
-                                  key={
+                            ) => (
+                              <div
+                                key={day.date}
+                                className={[
+                                  "habit-day",
+                                  `status-${day.status}`,
+                                  index
+                                  === selectedHabit
+                                    .recent_days
+                                    .length
+                                    - 1
+                                    ? "is-today"
+                                    : "",
+                                ]
+                                  .filter(Boolean)
+                                  .join(" ")}
+                              >
+                                <span>
+                                  {getDayName(
                                     day.date
-                                  }
-                                  className={[
-                                    "habit-day",
-                                    `status-${day.status}`,
-                                    isToday
-                                      ? "is-today"
-                                      : "",
-                                  ]
-                                    .filter(Boolean)
-                                    .join(" ")}
-                                >
-                                  <span>
-                                    {
-                                      getDayName(
-                                        day.date
-                                      )
-                                    }
-                                  </span>
+                                  )}
+                                </span>
 
-                                  <i>
-                                    {day.status
-                                    === "completed"
-                                      ? "✓"
-                                      : day.status
-                                        === "missed"
-                                        ? "×"
-                                        : ""}
-                                  </i>
-                                </div>
-                              );
-                            }
+                                <i>
+                                  {day.status
+                                  === "completed"
+                                    ? "✓"
+                                    : day.status
+                                      === "missed"
+                                      ? "×"
+                                      : ""}
+                                </i>
+                              </div>
+                            )
                           )}
                       </div>
-                    </section>
+                    </div>
 
 
-                    <section className="habit-detail-reward">
-                      <span>
-                        Small reward
-                      </span>
+                    {selectedHabit.reward && (
+                      <div className="habit-detail-reward">
+                        <span>
+                          Reward
+                        </span>
 
-                      <p>
-                        {selectedHabit.reward
-                        || "Not added."}
-                      </p>
-                    </section>
+                        <p>
+                          {selectedHabit.reward}
+                        </p>
+                      </div>
+                    )}
+
+
+                    {selectedHabit.status
+                    === "active" && (
+                      <div className="habit-detail-today">
+                        <span>
+                          Today
+                        </span>
+
+                        <div>
+                          <button
+                            type="button"
+                            className={
+                              selectedHabit.today_status
+                              === "missed"
+                                ? "is-selected"
+                                : ""
+                            }
+                            disabled={
+                              changingHabitId
+                              === selectedHabit.id
+                            }
+                            onClick={() =>
+                              void markHabitMissed(
+                                selectedHabit
+                              )
+                            }
+                          >
+                            × Not done
+                          </button>
+
+                          <button
+                            type="button"
+                            className={[
+                              "is-done",
+                              selectedHabit.today_status
+                              === "completed"
+                                ? "is-selected"
+                                : "",
+                            ]
+                              .filter(Boolean)
+                              .join(" ")}
+                            disabled={
+                              changingHabitId
+                              === selectedHabit.id
+                            }
+                            onClick={() =>
+                              void completeHabit(
+                                selectedHabit
+                              )
+                            }
+                          >
+                            ✓ Done
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
 
@@ -1921,9 +1815,7 @@ export default function HabitsPage() {
                     <div>
                       <button
                         type="button"
-                        onClick={
-                          startEditing
-                        }
+                        onClick={startEditing}
                       >
                         Edit
                       </button>
@@ -1937,10 +1829,6 @@ export default function HabitsPage() {
                               selectedHabit
                             )
                           }
-                          disabled={
-                            changingHabitId
-                            === selectedHabit.id
-                          }
                         >
                           Archive
                         </button>
@@ -1951,10 +1839,6 @@ export default function HabitsPage() {
                             void restoreHabit(
                               selectedHabit
                             )
-                          }
-                          disabled={
-                            changingHabitId
-                            === selectedHabit.id
                           }
                         >
                           Restore
@@ -1973,62 +1857,6 @@ export default function HabitsPage() {
                         Delete
                       </button>
                     </div>
-
-
-                    {selectedHabit.status
-                    === "active" && (
-                      <>
-                        {selectedHabit
-                          .today_status
-                        === "pending" && (
-                          <button
-                            type="button"
-                            className="habit-detail-primary"
-                            disabled={
-                              changingHabitId
-                              === selectedHabit.id
-                            }
-                            onClick={() =>
-                              void updateToday(
-                                selectedHabit,
-                                "complete"
-                              )
-                            }
-                          >
-                            Done today
-                          </button>
-                        )}
-
-                        {selectedHabit
-                          .today_status
-                        === "missed" && (
-                          <button
-                            type="button"
-                            className="habit-detail-primary"
-                            disabled={
-                              changingHabitId
-                              === selectedHabit.id
-                            }
-                            onClick={() =>
-                              void updateToday(
-                                selectedHabit,
-                                "complete"
-                              )
-                            }
-                          >
-                            Mark done
-                          </button>
-                        )}
-
-                        {selectedHabit
-                          .today_status
-                        === "completed" && (
-                          <span className="habit-detail-complete">
-                            ✓ Done today
-                          </span>
-                        )}
-                      </>
-                    )}
                   </footer>
                 </>
               )}
@@ -2040,7 +1868,6 @@ export default function HabitsPage() {
         {deleteHabitId !== null && (
           <div
             className="habit-delete-backdrop"
-            role="presentation"
             onMouseDown={(
               event
             ) => {
@@ -2052,32 +1879,25 @@ export default function HabitsPage() {
               }
             }}
           >
-            <section
-              className="habit-delete-dialog"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="habit-delete-title"
-            >
+            <section className="habit-delete-dialog">
               <span>
                 Delete habit
               </span>
 
-              <h2 id="habit-delete-title">
+              <h2>
                 Delete this habit?
               </h2>
 
               <p>
-                Its completion history
-                will also be removed.
+                Its history will also
+                be removed.
               </p>
 
               <div>
                 <button
                   type="button"
                   onClick={() =>
-                    setDeleteHabitId(
-                      null
-                    )
+                    setDeleteHabitId(null)
                   }
                 >
                   Cancel
