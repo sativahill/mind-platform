@@ -70,7 +70,7 @@ type AnalysisState =
   | "error";
 
 const API_URL =
-  "http://127.0.0.1:8000/api/daily-logs/";
+  "/api/daily-logs/";
 
 function formatDateForApi(date: Date) {
   const year = date.getFullYear();

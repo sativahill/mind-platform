@@ -15,7 +15,7 @@ import "./habits.css";
 
 
 const HABITS_API_URL =
-  "http://127.0.0.1:8000/api/habits/";
+  "/api/habits/";
 
 
 type HabitStatus =

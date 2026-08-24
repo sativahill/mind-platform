@@ -6,6 +6,8 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { apiUrl } from "@/lib/api";
+
 type RegisterErrorResponse = {
   username?: string[];
   email?: string[];
@@ -79,7 +81,7 @@ export default function RegisterPage() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/register/",
+        apiUrl("/api/register/"),
         {
           method: "POST",
           headers: {

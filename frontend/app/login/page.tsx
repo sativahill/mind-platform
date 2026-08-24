@@ -6,6 +6,8 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { apiUrl } from "@/lib/api";
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -28,7 +30,7 @@ export default function LoginPage() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/token/",
+        apiUrl("/api/token/"),
         {
           method: "POST",
           headers: {

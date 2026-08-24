@@ -1,11 +1,31 @@
+const configuredApiBaseUrl =
+  process.env.NEXT_PUBLIC_API_URL?.trim();
+
+if (!configuredApiBaseUrl) {
+  throw new Error(
+    "NEXT_PUBLIC_API_URL environment variable is required."
+  );
+}
+
+export const API_BASE_URL =
+  configuredApiBaseUrl.replace(/\/+$/, "");
+
+export function apiUrl(path: string) {
+  const normalizedPath = path.startsWith("/")
+    ? path
+    : `/${path}`;
+
+  return `${API_BASE_URL}${normalizedPath}`;
+}
+
 export async function apiFetch(
-  url: string,
+  path: string,
   options: RequestInit = {}
 ) {
   let accessToken =
     localStorage.getItem("access_token");
 
-  const response = await fetch(url, {
+  const response = await fetch(apiUrl(path), {
     ...options,
     headers: {
       ...(options.headers || {}),
@@ -26,7 +46,7 @@ export async function apiFetch(
   }
 
   const refreshResponse = await fetch(
-    "http://127.0.0.1:8000/api/token/refresh/",
+    apiUrl("/api/token/refresh/"),
     {
       method: "POST",
       headers: {
@@ -62,7 +82,7 @@ export async function apiFetch(
 
   accessToken = refreshData.access;
 
-  return fetch(url, {
+  return fetch(apiUrl(path), {
     ...options,
     headers: {
       ...(options.headers || {}),

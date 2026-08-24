@@ -72,10 +72,10 @@ interface TaskDraft {
 }
 
 const GOALS_API_URL =
-  "http://127.0.0.1:8000/api/goals/";
+  "/api/goals/";
 
 const BOARD_API_URL =
-  "http://127.0.0.1:8000/api/board/";
+  "/api/board/";
 
 const EMPTY_GOAL_DRAFT: GoalDraft = {
   title: "",

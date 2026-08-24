@@ -19,7 +19,7 @@ import "./chat.css";
 
 
 const CHATS_API_URL =
-  "http://127.0.0.1:8000/api/chats/";
+  "/api/chats/";
 
 
 interface Chat {
