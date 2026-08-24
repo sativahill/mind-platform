@@ -897,6 +897,15 @@ export default function GoalsPage() {
     setIsComposerOpen(true);
   }
 
+  function resetComposerState() {
+    setIsComposerOpen(false);
+    setEditingGoal(null);
+    setGoalDraft(
+      EMPTY_GOAL_DRAFT
+    );
+    setError("");
+  }
+
   function closeComposer() {
     if (
       requestState !== "idle"
@@ -904,12 +913,7 @@ export default function GoalsPage() {
       return;
     }
 
-    setIsComposerOpen(false);
-    setEditingGoal(null);
-    setGoalDraft(
-      EMPTY_GOAL_DRAFT
-    );
-    setError("");
+    resetComposerState();
   }
 
   function openGoal(
@@ -1002,7 +1006,7 @@ export default function GoalsPage() {
         savedGoal.id
       );
 
-      closeComposer();
+      resetComposerState();
     } catch (saveError) {
       console.error(
         "Goal save error:",
