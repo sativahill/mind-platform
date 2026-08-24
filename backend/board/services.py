@@ -7,7 +7,7 @@ from django.db import transaction
 from django.db.models import Prefetch
 from django.utils import timezone
 
-from brain.services import deep_merge_dict
+from brain.services import update_brain_data
 from goals.models import Goal
 from goals.services import (
     recalculate_goal_progress,
@@ -160,9 +160,6 @@ def sync_brain_board(
         serialized_tasks
     )
 
-    brain = user.brain
-    brain_data = brain.data or {}
-
     update_data = {
         "progress": {
             "board": {
@@ -207,15 +204,9 @@ def sync_brain_board(
         },
     }
 
-    brain.data = deep_merge_dict(
-        brain_data,
-        update_data,
-    )
-
-    brain.save(
-        update_fields=[
-            "data",
-        ]
+    update_brain_data(
+        user=user,
+        patch=update_data,
     )
 
 

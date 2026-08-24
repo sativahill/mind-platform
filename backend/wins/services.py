@@ -3,7 +3,7 @@ from typing import Optional
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
-from brain.services import deep_merge_dict
+from brain.services import update_brain_data
 
 from .models import Win
 
@@ -112,13 +112,9 @@ def update_brain_from_win(win: Win) -> None:
         },
     }
 
-    brain.data = deep_merge_dict(
-        brain_data,
-        update_data,
-    )
-
-    brain.save(
-        update_fields=["data"]
+    update_brain_data(
+        user=win.user,
+        patch=update_data,
     )
 
 
@@ -146,9 +142,6 @@ def sync_brain_wins(user) -> None:
         else None
     )
 
-    brain = user.brain
-    brain_data = brain.data or {}
-
     update_data = {
         "history": {
             "wins": serialized_wins,
@@ -166,13 +159,9 @@ def sync_brain_wins(user) -> None:
         },
     }
 
-    brain.data = deep_merge_dict(
-        brain_data,
-        update_data,
-    )
-
-    brain.save(
-        update_fields=["data"]
+    update_brain_data(
+        user=user,
+        patch=update_data,
     )
 
 

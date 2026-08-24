@@ -2,7 +2,7 @@ from typing import Any
 
 from django.db import transaction
 
-from brain.services import deep_merge_dict
+from brain.services import update_brain_data
 from wins.services import create_habit_streak_win
 
 from .models import Habit
@@ -113,20 +113,11 @@ def sync_brain_habits(
         user
     )
 
-    brain = user.brain
-    brain_data = brain.data or {}
-
-    brain.data = deep_merge_dict(
-        brain_data,
-        {
+    update_brain_data(
+        user=user,
+        patch={
             "habits": serialized_habits,
         },
-    )
-
-    brain.save(
-        update_fields=[
-            "data",
-        ]
     )
 
 

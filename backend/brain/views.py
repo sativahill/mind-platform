@@ -1,34 +1,49 @@
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from rest_framework.permissions import IsAuthenticated
+from .serializers import (
+    BrainSerializer,
+    BrainUpdateSerializer,
+)
+from .services import update_brain_data
 
-from .models import Brain
-from .serializers import BrainSerializer
-from .services import deep_merge_dict
 
 class BrainView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        brain = request.user.brain
-
-        serializer = BrainSerializer(brain)
-
+        serializer = BrainSerializer(
+            request.user.brain
+        )
         return Response(serializer.data)
-    
-    def post (self, request):
-        brain = request.user.brain
 
-        merged_data = deep_merge_dict(
-            brain.data,
-            request.data.get("data", {})
+    def post(self, request):
+        if not isinstance(request.data, dict):
+            return Response(
+                {
+                    "detail": (
+                        "Request body must be a JSON object."
+                    ),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        update_serializer = BrainUpdateSerializer(
+            data=request.data
+        )
+        update_serializer.is_valid(
+            raise_exception=True
         )
 
-        brain.data = merged_data
-        brain.save()
-
-        serializer = BrainSerializer(brain)
-
-        return Response(serializer.data)
+        brain = update_brain_data(
+            user=request.user,
+            patch=(
+                update_serializer
+                .validated_data["data"]
+            ),
+        )
+        return Response(
+            BrainSerializer(brain).data
+        )

@@ -1,9 +1,7 @@
-from brain.services import deep_merge_dict
+from brain.services import update_brain_data
 
 
 def update_brain_from_progress_photo(progress_photo):
-    brain = progress_photo.user.brain
-
     update_data = {
         "progress_photos": {
             "last_photo": {
@@ -14,9 +12,7 @@ def update_brain_from_progress_photo(progress_photo):
         }
     }
 
-    brain.data = deep_merge_dict(
-        brain.data,
-        update_data,
+    update_brain_data(
+        user=progress_photo.user,
+        patch=update_data,
     )
-
-    brain.save()
