@@ -4,7 +4,11 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from board.models import BoardTask
+from board.models import (
+    BoardTask,
+    BoardTaskDependency,
+)
+from board.services import sync_brain_board
 from users.models import User
 from wins.models import Win
 
@@ -368,6 +372,212 @@ class GoalAPITests(APITestCase):
                 for item in active_goals
             ],
             [first_goal.id],
+        )
+
+    def test_delete_goal_removes_cascaded_tasks_from_brain(
+        self,
+    ):
+        goal = Goal.objects.create(
+            user=self.user,
+            title="Temporary goal",
+        )
+
+        task = BoardTask.objects.create(
+            goal=goal,
+            title="Temporary task",
+            status=BoardTask.IN_PROGRESS,
+            due_date=date(2020, 1, 1),
+        )
+
+        sync_brain_board(
+            self.user
+        )
+
+        response = self.client.delete(
+            f"{self.url}?id={goal.id}"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT,
+        )
+
+        self.assertFalse(
+            Goal.objects.filter(
+                id=goal.id
+            ).exists()
+        )
+
+        self.assertFalse(
+            BoardTask.objects.filter(
+                id=task.id
+            ).exists()
+        )
+
+        self.user.brain.refresh_from_db()
+        brain_data = self.user.brain.data
+
+        self.assertEqual(
+            brain_data["history"]["board_tasks"],
+            [],
+        )
+
+        self.assertEqual(
+            brain_data["progress"]["board"],
+            {
+                "total": 0,
+                "todo": 0,
+                "in_progress": 0,
+                "done": 0,
+                "blocked": 0,
+                "overdue": 0,
+            },
+        )
+
+        self.assertEqual(
+            brain_data["context"]["board"],
+            {
+                "next_task": None,
+                "in_progress_tasks": [],
+                "overdue_tasks": [],
+                "blocked_tasks": [],
+            },
+        )
+
+    def test_delete_goal_preserves_and_recalculates_other_state(
+        self,
+    ):
+        deleted_goal = Goal.objects.create(
+            user=self.user,
+            title="Deleted goal",
+        )
+
+        remaining_goal = Goal.objects.create(
+            user=self.user,
+            title="Remaining goal",
+        )
+
+        deleted_task = BoardTask.objects.create(
+            goal=deleted_goal,
+            title="Deleted task",
+            status=BoardTask.IN_PROGRESS,
+            priority=BoardTask.PRIORITY_CRITICAL,
+            due_date=date(2020, 1, 1),
+        )
+
+        remaining_task = BoardTask.objects.create(
+            goal=remaining_goal,
+            title="Remaining task",
+            status=BoardTask.TODO,
+        )
+
+        BoardTaskDependency.objects.create(
+            task=remaining_task,
+            depends_on=deleted_task,
+        )
+
+        sync_brain_board(
+            self.user
+        )
+
+        response = self.client.delete(
+            f"{self.url}?id={deleted_goal.id}"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT,
+        )
+
+        self.assertFalse(
+            Goal.objects.filter(
+                id=deleted_goal.id
+            ).exists()
+        )
+
+        self.assertTrue(
+            Goal.objects.filter(
+                id=remaining_goal.id
+            ).exists()
+        )
+
+        self.assertFalse(
+            BoardTask.objects.filter(
+                id=deleted_task.id
+            ).exists()
+        )
+
+        self.assertTrue(
+            BoardTask.objects.filter(
+                id=remaining_task.id
+            ).exists()
+        )
+
+        self.user.brain.refresh_from_db()
+        brain_data = self.user.brain.data
+
+        board_tasks = brain_data[
+            "history"
+        ]["board_tasks"]
+
+        self.assertEqual(
+            [
+                task["id"]
+                for task in board_tasks
+            ],
+            [remaining_task.id],
+        )
+
+        board_progress = brain_data[
+            "progress"
+        ]["board"]
+
+        self.assertEqual(
+            board_progress,
+            {
+                "total": 1,
+                "todo": 1,
+                "in_progress": 0,
+                "done": 0,
+                "blocked": 0,
+                "overdue": 0,
+            },
+        )
+
+        board_context = brain_data[
+            "context"
+        ]["board"]
+
+        self.assertEqual(
+            board_context["next_task"]["id"],
+            remaining_task.id,
+        )
+
+        self.assertEqual(
+            board_context["in_progress_tasks"],
+            [],
+        )
+
+        self.assertEqual(
+            board_context["blocked_tasks"],
+            [],
+        )
+
+        self.assertEqual(
+            board_context["overdue_tasks"],
+            [],
+        )
+
+        active_goals = brain_data[
+            "progress"
+        ]["goals"]["active"]
+
+        self.assertEqual(
+            [
+                goal_data["id"]
+                for goal_data in active_goals
+            ],
+            [remaining_goal.id],
         )
 
 

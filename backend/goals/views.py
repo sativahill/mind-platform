@@ -1,8 +1,12 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
+
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from board.services import sync_brain_board
 
 from .models import Goal
 from .serializers import GoalSerializer
@@ -225,6 +229,7 @@ class GoalView(APIView):
             status=status.HTTP_200_OK,
         )
 
+    @transaction.atomic
     def delete(self, request):
         goal = self.get_goal(
             request
@@ -244,6 +249,10 @@ class GoalView(APIView):
         goal.delete()
 
         sync_brain_goals(
+            request.user
+        )
+
+        sync_brain_board(
             request.user
         )
 
