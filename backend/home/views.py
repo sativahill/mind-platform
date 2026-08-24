@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from daily_logs.models import DailyLog
 from goals.models import Goal
 from habits.models import Habit, HabitCompletion
+from habits.services import refresh_habit_state
 from wins.models import Win
 
 
@@ -71,8 +72,13 @@ class HomeView(APIView):
             status=Goal.ACTIVE,
         )
 
-        habits = Habit.objects.filter(
-            user=user
+        active_habits = list(
+            Habit.objects.filter(
+                user=user,
+                status=Habit.Status.ACTIVE,
+            ).order_by(
+                "-updated_at"
+            )
         )
 
         last_daily_log = (
@@ -98,30 +104,40 @@ class HomeView(APIView):
         )
 
         latest_habit = (
-            habits
-            .order_by("-updated_at")
-            .first()
+            active_habits[0]
+            if active_habits
+            else None
         )
+
+        for habit in active_habits:
+            refresh_habit_state(
+                habit
+            )
 
         habits_completed_today = (
             HabitCompletion.objects.filter(
                 habit__user=user,
+                habit__status=(
+                    Habit.Status.ACTIVE
+                ),
                 completed_at=today,
+                status=(
+                    HabitCompletion
+                    .Status
+                    .COMPLETED
+                ),
             )
             .values("habit_id")
             .distinct()
             .count()
         )
 
-        highest_streak = (
-            habits
-            .order_by("-streak")
-            .values_list(
-                "streak",
-                flat=True,
-            )
-            .first()
-            or 0
+        highest_streak = max(
+            (
+                habit.streak
+                for habit in active_habits
+            ),
+            default=0,
         )
 
         return Response(
@@ -208,7 +224,7 @@ class HomeView(APIView):
 
                 "habits": {
                     "active_count": (
-                        habits.count()
+                        len(active_habits)
                     ),
 
                     "completed_today": (
