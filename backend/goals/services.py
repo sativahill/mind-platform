@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.utils import timezone
 
-from brain.services import deep_merge_dict
+from brain.services import update_brain_data
 from wins.services import create_goal_win
 
 from .models import Goal
@@ -79,9 +79,6 @@ def sync_brain_goals(user) -> None:
         else None
     )
 
-    brain = user.brain
-    brain_data = brain.data or {}
-
     update_data = {
         "progress": {
             "goals": {
@@ -98,13 +95,9 @@ def sync_brain_goals(user) -> None:
         },
     }
 
-    brain.data = deep_merge_dict(
-        brain_data,
-        update_data,
-    )
-
-    brain.save(
-        update_fields=["data"],
+    update_brain_data(
+        user=user,
+        patch=update_data,
     )
 
 

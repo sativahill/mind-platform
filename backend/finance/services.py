@@ -1,9 +1,7 @@
-from brain.services import deep_merge_dict
+from brain.services import update_brain_data
 
 
 def update_brain_from_finance_goal(goal):
-    brain = goal.user.brain
-
     update_data = {
         "finance": {
             "last_goal": {
@@ -14,9 +12,7 @@ def update_brain_from_finance_goal(goal):
         }
     }
 
-    brain.data = deep_merge_dict(
-        brain.data,
-        update_data,
+    update_brain_data(
+        user=goal.user,
+        patch=update_data,
     )
-
-    brain.save()

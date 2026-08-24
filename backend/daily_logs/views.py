@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from brain.services import update_brain_data
 from wins.services import create_daily_log_win
 
 from .ai_service import (
@@ -792,18 +793,8 @@ class DailyLogView(APIView):
             .first()
         )
 
-        brain = user.brain
-        brain_data = brain.data or {}
-
-        context = brain_data.setdefault(
-            "context",
-            {},
-        )
-
         if latest_log:
-            context[
-                "last_daily_log"
-            ] = {
+            last_daily_log = {
                 "date": str(
                     latest_log.date
                 ),
@@ -812,12 +803,15 @@ class DailyLogView(APIView):
                 ),
             }
         else:
-            context[
-                "last_daily_log"
-            ] = None
+            last_daily_log = None
 
-        brain.data = brain_data
-
-        brain.save(
-            update_fields=["data"]
+        update_brain_data(
+            user=user,
+            patch={
+                "context": {
+                    "last_daily_log": (
+                        last_daily_log
+                    ),
+                },
+            },
         )
