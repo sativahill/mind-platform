@@ -7,6 +7,48 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+TRUE_VALUES = {"1", "true", "yes", "on"}
+FALSE_VALUES = {"0", "false", "no", "off"}
+
+
+def env_bool(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+
+    normalized_value = value.strip().lower()
+    if normalized_value in TRUE_VALUES:
+        return True
+    if normalized_value in FALSE_VALUES:
+        return False
+
+    raise RuntimeError(
+        f"{name} must be one of: 1, true, yes, on, 0, false, no, off."
+    )
+
+
+def env_list(name):
+    value = os.getenv(name)
+    if not value:
+        return []
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def env_non_negative_int(name, default=0):
+    value = os.getenv(name)
+    if value is None:
+        return default
+
+    try:
+        parsed_value = int(value)
+    except ValueError as exc:
+        raise RuntimeError(f"{name} must be a non-negative integer.") from exc
+
+    if parsed_value < 0:
+        raise RuntimeError(f"{name} must be a non-negative integer.")
+    return parsed_value
+
+
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 if not SECRET_KEY:
