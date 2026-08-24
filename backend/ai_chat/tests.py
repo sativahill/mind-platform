@@ -325,6 +325,118 @@ class AIChatTests(TestCase):
             "AI response",
         )
 
+        self.assertEqual(
+            messages[0].chat.user,
+            self.user,
+        )
+
+    @patch(
+        "ai_chat.views.generate_ai_response"
+    )
+    def test_provider_exception_does_not_save_messages(
+        self,
+        mock_generate,
+    ):
+        existing_message = Message.objects.create(
+            chat=self.chat,
+            role=Message.USER,
+            content="Existing message",
+        )
+
+        self.chat.refresh_from_db()
+        previous_updated_at = self.chat.updated_at
+        previous_message_count = (
+            Message.objects
+            .filter(chat=self.chat)
+            .count()
+        )
+
+        mock_generate.side_effect = RuntimeError(
+            "Provider failure details"
+        )
+
+        response = self.client.post(
+            self.messages_url,
+            {
+                "content": "Uncommitted message",
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            503,
+        )
+
+        self.assertNotIn(
+            "Provider failure details",
+            str(response.data),
+        )
+
+        self.assertEqual(
+            Message.objects
+            .filter(chat=self.chat)
+            .count(),
+            previous_message_count,
+        )
+
+        self.assertEqual(
+            list(
+                Message.objects
+                .filter(chat=self.chat)
+                .values_list("id", flat=True)
+            ),
+            [existing_message.id],
+        )
+
+        self.chat.refresh_from_db()
+
+        self.assertEqual(
+            self.chat.updated_at,
+            previous_updated_at,
+        )
+
+    @patch(
+        "ai_chat.views.generate_ai_response"
+    )
+    def test_unusable_provider_response_does_not_save_messages(
+        self,
+        mock_generate,
+    ):
+        unusable_responses = [
+            None,
+            "   ",
+            object(),
+        ]
+
+        for unusable_response in unusable_responses:
+            with self.subTest(
+                response=unusable_response
+            ):
+                mock_generate.return_value = (
+                    unusable_response
+                )
+
+                response = self.client.post(
+                    self.messages_url,
+                    {
+                        "content": "Uncommitted message",
+                    },
+                    format="json",
+                )
+
+                self.assertEqual(
+                    response.status_code,
+                    503,
+                )
+
+                self.assertEqual(
+                    Message.objects
+                    .filter(chat=self.chat)
+                    .count(),
+                    0,
+                )
+
     @patch(
         "ai_chat.views.generate_ai_response"
     )

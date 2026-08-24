@@ -1,6 +1,8 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -123,26 +125,21 @@ class MessageView(APIView):
             raise_exception=True
         )
 
-        user_message = (
-            Message.objects.create(
-                chat=chat,
-                role=Message.USER,
-                content=(
-                    serializer
-                    .validated_data[
-                        "content"
-                    ]
-                ),
-            )
+        user_message = Message(
+            chat=chat,
+            role=Message.USER,
+            content=(
+                serializer
+                .validated_data[
+                    "content"
+                ]
+            ),
         )
 
         previous_messages = list(
             Message.objects
             .filter(
                 chat=chat,
-            )
-            .exclude(
-                id=user_message.id
             )
             .order_by(
                 "-created_at"
@@ -178,34 +175,64 @@ class MessageView(APIView):
             None,
         )
 
-        ai_response = (
-            generate_ai_response(
-                brain=brain,
-                current_chat_title=(
-                    chat.title
-                ),
-                other_chat_titles=(
-                    other_chat_titles
-                ),
-                messages=(
-                    conversation_messages
+        try:
+            ai_response = (
+                generate_ai_response(
+                    brain=brain,
+                    current_chat_title=(
+                        chat.title
+                    ),
+                    other_chat_titles=(
+                        other_chat_titles
+                    ),
+                    messages=(
+                        conversation_messages
+                    ),
+                )
+            )
+        except Exception:
+            return Response(
+                {
+                    "detail": (
+                        "AI service is temporarily unavailable."
+                    ),
+                },
+                status=(
+                    status.HTTP_503_SERVICE_UNAVAILABLE
                 ),
             )
-        )
 
-        assistant_message = (
-            Message.objects.create(
+        if (
+            not isinstance(ai_response, str)
+            or not ai_response.strip()
+        ):
+            return Response(
+                {
+                    "detail": (
+                        "AI service is temporarily unavailable."
+                    ),
+                },
+                status=(
+                    status.HTTP_503_SERVICE_UNAVAILABLE
+                ),
+            )
+
+        ai_response = ai_response.strip()
+
+        with transaction.atomic():
+            user_message.save()
+
+            assistant_message = Message.objects.create(
                 chat=chat,
                 role=Message.ASSISTANT,
                 content=ai_response,
             )
-        )
 
-        Chat.objects.filter(
-            id=chat.id
-        ).update(
-            updated_at=timezone.now()
-        )
+            Chat.objects.filter(
+                id=chat.id
+            ).update(
+                updated_at=timezone.now()
+            )
 
         return Response(
             MessageSerializer(
