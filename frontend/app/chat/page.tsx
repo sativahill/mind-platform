@@ -275,6 +275,45 @@ export default function ChatPage() {
   const layoutFrameRef =
     useRef<number | null>(null);
 
+  const activeChatIdRef =
+    useRef<number | null>(null);
+
+  const activeChatVersionRef =
+    useRef(0);
+
+  const messageRequestIdRef =
+    useRef(0);
+
+  const sendingChatIdsRef =
+    useRef(new Set<number>());
+
+
+  const activateChat =
+    useCallback(
+      (chatId: number | null) => {
+        if (
+          activeChatIdRef.current
+          === chatId
+        ) {
+          return;
+        }
+
+        activeChatIdRef.current =
+          chatId;
+        activeChatVersionRef.current += 1;
+        messageRequestIdRef.current += 1;
+
+        setSelectedChatId(chatId);
+        setIsSending(false);
+        setError("");
+        setMessages([]);
+        setIsLoadingMessages(
+          chatId !== null
+        );
+      },
+      []
+    );
+
 
   const selectedChat =
     useMemo(
@@ -464,6 +503,31 @@ export default function ChatPage() {
         chatId: number,
         showLoading = true
       ) => {
+        if (
+          activeChatIdRef.current
+          !== chatId
+        ) {
+          return;
+        }
+
+        const activeChatVersion =
+          activeChatVersionRef.current;
+        const requestId =
+          messageRequestIdRef.current
+          + 1;
+
+        messageRequestIdRef.current =
+          requestId;
+
+        const isCurrentRequest = () => (
+          activeChatIdRef.current
+            === chatId
+          && activeChatVersionRef.current
+            === activeChatVersion
+          && messageRequestIdRef.current
+            === requestId
+        );
+
         if (showLoading) {
           setIsLoadingMessages(true);
         }
@@ -490,21 +554,27 @@ export default function ChatPage() {
             );
           }
 
-          setMessages(
-            Array.isArray(data)
-              ? data
-              : []
-          );
+          if (isCurrentRequest()) {
+            setMessages(
+              Array.isArray(data)
+                ? data
+                : []
+            );
+          }
         } catch (requestError) {
-          setError(
-            getErrorMessage(
-              requestError
-            )
-          );
+          if (isCurrentRequest()) {
+            setError(
+              getErrorMessage(
+                requestError
+              )
+            );
+          }
         } finally {
-          setIsLoadingMessages(
-            false
-          );
+          if (isCurrentRequest()) {
+            setIsLoadingMessages(
+              false
+            );
+          }
         }
       },
       []
@@ -549,29 +619,23 @@ export default function ChatPage() {
           if (
             loadedChats.length === 0
           ) {
-            setSelectedChatId(null);
-            setMessages([]);
+            activateChat(null);
             return;
           }
 
-          setSelectedChatId(
-            (currentId) => {
-              const exists =
-                loadedChats.some(
-                  (chat) =>
-                    chat.id
-                    === currentId
-                );
+          const currentId =
+            activeChatIdRef.current;
+          const currentChatExists =
+            currentId !== null
+            && loadedChats.some(
+              (chat) =>
+                chat.id === currentId
+            );
 
-              if (
-                currentId !== null
-                && exists
-              ) {
-                return currentId;
-              }
-
-              return loadedChats[0].id;
-            }
+          activateChat(
+            currentChatExists
+              ? currentId
+              : loadedChats[0].id
           );
         } catch (requestError) {
           setError(
@@ -585,7 +649,7 @@ export default function ChatPage() {
           );
         }
       },
-      []
+      [activateChat]
     );
 
 
@@ -889,8 +953,7 @@ export default function ChatPage() {
         ]
       );
 
-      setMessages([]);
-      setSelectedChatId(
+      activateChat(
         createdChat.id
       );
 
@@ -912,12 +975,12 @@ export default function ChatPage() {
     chatId: number
   ) {
     if (
-      chatId === selectedChatId
+      chatId === activeChatIdRef.current
     ) {
       return;
     }
 
-    setSelectedChatId(
+    activateChat(
       chatId
     );
   }
@@ -931,6 +994,9 @@ export default function ChatPage() {
     if (
       selectedChatId === null
       || isSending
+      || sendingChatIdsRef
+        .current
+        .has(selectedChatId)
     ) {
       return;
     }
@@ -944,6 +1010,15 @@ export default function ChatPage() {
 
     const chatId =
       selectedChatId;
+    const activeChatVersion =
+      activeChatVersionRef.current;
+
+    const isCurrentSend = () => (
+      activeChatIdRef.current
+        === chatId
+      && activeChatVersionRef.current
+        === activeChatVersion
+    );
 
     const optimisticMessage =
       makeTemporaryMessage(
@@ -953,6 +1028,10 @@ export default function ChatPage() {
     setMessage("");
     setError("");
     setIsSending(true);
+
+    sendingChatIdsRef.current.add(
+      chatId
+    );
 
     setMessages(
       (current) => [
@@ -991,10 +1070,18 @@ export default function ChatPage() {
         );
       }
 
+      if (!isCurrentSend()) {
+        return;
+      }
+
       await loadMessages(
         chatId,
         false
       );
+
+      if (!isCurrentSend()) {
+        return;
+      }
 
       const chatsResponse =
         await apiFetch(
@@ -1007,7 +1094,8 @@ export default function ChatPage() {
         );
 
       if (
-        chatsResponse.ok
+        isCurrentSend()
+        && chatsResponse.ok
         && Array.isArray(
           chatsData
         )
@@ -1017,34 +1105,42 @@ export default function ChatPage() {
         );
       }
     } catch (requestError) {
-      setMessages(
-        (current) =>
-          current.filter(
-            (item) =>
-              item.id
-              !== optimisticMessage.id
+      if (isCurrentSend()) {
+        setMessages(
+          (current) =>
+            current.filter(
+              (item) =>
+                item.id
+                !== optimisticMessage.id
+            )
+        );
+
+        setMessage(
+          cleanMessage
+        );
+
+        setError(
+          getErrorMessage(
+            requestError
           )
-      );
-
-      setMessage(
-        cleanMessage
-      );
-
-      setError(
-        getErrorMessage(
-          requestError
-        )
-      );
+        );
+      }
     } finally {
-      setIsSending(false);
-
-      window.setTimeout(
-        () => {
-          textareaRef.current
-            ?.focus();
-        },
-        0
+      sendingChatIdsRef.current.delete(
+        chatId
       );
+
+      if (isCurrentSend()) {
+        setIsSending(false);
+
+        window.setTimeout(
+          () => {
+            textareaRef.current
+              ?.focus();
+          },
+          0
+        );
+      }
     }
   }
 
