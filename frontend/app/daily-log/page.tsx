@@ -8,6 +8,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -277,6 +278,64 @@ export default function DailyLogPage() {
     setResolvingSuggestionId,
   ] = useState<number | null>(null);
 
+  const selectedDateRef =
+    useRef(today);
+
+  const selectedDateVersionRef =
+    useRef(0);
+
+  const selectedLogRequestIdRef =
+    useRef(0);
+
+  const suggestionsRequestIdRef =
+    useRef(0);
+
+
+  const isCurrentDate =
+    useCallback(
+      (
+        date: string,
+        dateVersion: number
+      ) => (
+        selectedDateRef.current
+          === date
+        && selectedDateVersionRef.current
+          === dateVersion
+      ),
+      []
+    );
+
+  const activateDate =
+    useCallback(
+      (date: string) => {
+        if (
+          selectedDateRef.current
+          === date
+        ) {
+          return;
+        }
+
+        selectedDateRef.current = date;
+        selectedDateVersionRef.current += 1;
+        selectedLogRequestIdRef.current += 1;
+        suggestionsRequestIdRef.current += 1;
+
+        setSelectedDate(date);
+        setCurrentLog(null);
+        setContent("");
+        setOriginalContent("");
+        setIsLoading(true);
+        setSaveState("idle");
+        setError("");
+        setShowDeleteConfirm(false);
+        setSuggestions([]);
+        setAnalysisState("idle");
+        setAnalysisError("");
+        setResolvingSuggestionId(null);
+      },
+      []
+    );
+
   const hasUnsavedChanges =
     content !== originalContent;
 
@@ -350,9 +409,31 @@ export default function DailyLogPage() {
   );
 
   const loadSuggestions = useCallback(
-    async (logId: number) => {
+    async (
+      logId: number,
+      sourceDate: string,
+      sourceDateVersion: number
+    ) => {
+      const requestId =
+        suggestionsRequestIdRef.current
+        + 1;
+
+      suggestionsRequestIdRef.current =
+        requestId;
+
+      const isCurrentRequest = () => (
+        isCurrentDate(
+          sourceDate,
+          sourceDateVersion
+        )
+        && suggestionsRequestIdRef.current
+          === requestId
+      );
+
       try {
-        setAnalysisError("");
+        if (isCurrentRequest()) {
+          setAnalysisError("");
+        }
 
         const response = await apiFetch(
           `${API_URL}?id=${logId}&action=suggestions`
@@ -367,30 +448,45 @@ export default function DailyLogPage() {
           );
         }
 
-        setSuggestions(
-          Array.isArray(data)
-            ? (data as DailyLogSuggestion[])
-            : []
-        );
+        if (isCurrentRequest()) {
+          setSuggestions(
+            Array.isArray(data)
+              ? (data as DailyLogSuggestion[])
+              : []
+          );
+        }
       } catch (loadError) {
         console.error(
           "Daily Log suggestions error:",
           loadError
         );
 
-        setSuggestions([]);
-        setAnalysisError(
-          loadError instanceof Error
-            ? loadError.message
-            : "Unable to load suggestions."
-        );
+        if (isCurrentRequest()) {
+          setSuggestions([]);
+          setAnalysisError(
+            loadError instanceof Error
+              ? loadError.message
+              : "Unable to load suggestions."
+          );
+        }
       }
     },
-    []
+    [isCurrentDate]
   );
 
   const analyzeLog = useCallback(
     async (logId: number) => {
+      const sourceDate =
+        selectedDateRef.current;
+      const sourceDateVersion =
+        selectedDateVersionRef.current;
+      const isCurrentRequest = () => (
+        isCurrentDate(
+          sourceDate,
+          sourceDateVersion
+        )
+      );
+
       try {
         setAnalysisState("loading");
         setAnalysisError("");
@@ -414,34 +510,63 @@ export default function DailyLogPage() {
         const result =
           data as AnalyzeResponse;
 
-        setSuggestions(
-          Array.isArray(
-            result.suggestions
-          )
-            ? result.suggestions
-            : []
-        );
+        if (isCurrentRequest()) {
+          setSuggestions(
+            Array.isArray(
+              result.suggestions
+            )
+              ? result.suggestions
+              : []
+          );
 
-        setAnalysisState("idle");
+          setAnalysisState("idle");
+        }
       } catch (analysisRequestError) {
         console.error(
           "Daily Log analysis error:",
           analysisRequestError
         );
 
-        setAnalysisState("error");
-        setAnalysisError(
-          analysisRequestError instanceof Error
-            ? analysisRequestError.message
-            : "Analysis is temporarily unavailable."
-        );
+        if (isCurrentRequest()) {
+          setAnalysisState("error");
+          setAnalysisError(
+            analysisRequestError instanceof Error
+              ? analysisRequestError.message
+              : "Analysis is temporarily unavailable."
+          );
+        }
       }
     },
-    []
+    [isCurrentDate]
   );
 
   const loadSelectedLog = useCallback(
     async (date: string) => {
+      if (
+        selectedDateRef.current
+        !== date
+      ) {
+        return;
+      }
+
+      const sourceDateVersion =
+        selectedDateVersionRef.current;
+      const requestId =
+        selectedLogRequestIdRef.current
+        + 1;
+
+      selectedLogRequestIdRef.current =
+        requestId;
+
+      const isCurrentRequest = () => (
+        isCurrentDate(
+          date,
+          sourceDateVersion
+        )
+        && selectedLogRequestIdRef.current
+          === requestId
+      );
+
       try {
         setIsLoading(true);
         setError("");
@@ -457,9 +582,11 @@ export default function DailyLogPage() {
         );
 
         if (response.status === 404) {
-          setCurrentLog(null);
-          setContent("");
-          setOriginalContent("");
+          if (isCurrentRequest()) {
+            setCurrentLog(null);
+            setContent("");
+            setOriginalContent("");
+          }
           return;
         }
 
@@ -474,6 +601,10 @@ export default function DailyLogPage() {
 
         const log = data as DailyLog;
 
+        if (!isCurrentRequest()) {
+          return;
+        }
+
         setCurrentLog(log);
         setContent(log.content);
         setOriginalContent(
@@ -481,7 +612,9 @@ export default function DailyLogPage() {
         );
 
         await loadSuggestions(
-          log.id
+          log.id,
+          date,
+          sourceDateVersion
         );
       } catch (loadError) {
         console.error(
@@ -489,16 +622,23 @@ export default function DailyLogPage() {
           loadError
         );
 
-        setError(
-          loadError instanceof Error
-            ? loadError.message
-            : "Unable to load this entry."
-        );
+        if (isCurrentRequest()) {
+          setError(
+            loadError instanceof Error
+              ? loadError.message
+              : "Unable to load this entry."
+          );
+        }
       } finally {
-        setIsLoading(false);
+        if (isCurrentRequest()) {
+          setIsLoading(false);
+        }
       }
     },
-    [loadSuggestions]
+    [
+      isCurrentDate,
+      loadSuggestions,
+    ]
   );
 
   useEffect(() => {
@@ -553,7 +693,7 @@ export default function DailyLogPage() {
       return;
     }
 
-    setSelectedDate(nextDate);
+    activateDate(nextDate);
   }
 
   async function handleSubmit(
@@ -568,6 +708,17 @@ export default function DailyLogPage() {
     ) {
       return;
     }
+
+    const sourceDate =
+      selectedDateRef.current;
+    const sourceDateVersion =
+      selectedDateVersionRef.current;
+    const isCurrentOperation = () => (
+      isCurrentDate(
+        sourceDate,
+        sourceDateVersion
+      )
+    );
 
     try {
       setError("");
@@ -589,7 +740,7 @@ export default function DailyLogPage() {
               "application/json",
           },
           body: JSON.stringify({
-            date: selectedDate,
+            date: sourceDate,
             content,
           }),
         }
@@ -599,15 +750,21 @@ export default function DailyLogPage() {
         await response.json();
 
       if (!response.ok) {
-        setError(
-          getErrorMessage(data)
-        );
-        setSaveState("error");
+        if (isCurrentOperation()) {
+          setError(
+            getErrorMessage(data)
+          );
+          setSaveState("error");
+        }
         return;
       }
 
       const savedLog =
         data as DailyLog;
+
+      if (!isCurrentOperation()) {
+        return;
+      }
 
       setCurrentLog(savedLog);
       setContent(savedLog.content);
@@ -618,16 +775,22 @@ export default function DailyLogPage() {
 
       await loadHistory();
 
+      if (!isCurrentOperation()) {
+        return;
+      }
+
       await analyzeLog(
         savedLog.id
       );
 
       window.setTimeout(() => {
-        setSaveState((state) =>
-          state === "saved"
-            ? "idle"
-            : state
-        );
+        if (isCurrentOperation()) {
+          setSaveState((state) =>
+            state === "saved"
+              ? "idle"
+              : state
+          );
+        }
       }, 1800);
     } catch (saveError) {
       console.error(
@@ -635,11 +798,13 @@ export default function DailyLogPage() {
         saveError
       );
 
-      setError(
-        "Unable to save your entry."
-      );
+      if (isCurrentOperation()) {
+        setError(
+          "Unable to save your entry."
+        );
 
-      setSaveState("error");
+        setSaveState("error");
+      }
     }
   }
 
@@ -648,11 +813,23 @@ export default function DailyLogPage() {
       return;
     }
 
+    const sourceDate =
+      selectedDateRef.current;
+    const sourceDateVersion =
+      selectedDateVersionRef.current;
+    const logId = currentLog.id;
+    const isCurrentOperation = () => (
+      isCurrentDate(
+        sourceDate,
+        sourceDateVersion
+      )
+    );
+
     try {
       setError("");
 
       const response = await apiFetch(
-        `${API_URL}?id=${currentLog.id}`,
+        `${API_URL}?id=${logId}`,
         {
           method: "DELETE",
         }
@@ -668,22 +845,26 @@ export default function DailyLogPage() {
           data = null;
         }
 
-        setError(
-          getErrorMessage(data)
-        );
+        if (isCurrentOperation()) {
+          setError(
+            getErrorMessage(data)
+          );
+        }
 
         return;
       }
 
-      setCurrentLog(null);
-      setContent("");
-      setOriginalContent("");
-      setSaveState("idle");
-      setShowDeleteConfirm(false);
-      setSuggestions([]);
-      setAnalysisState("idle");
-      setAnalysisError("");
-      setResolvingSuggestionId(null);
+      if (isCurrentOperation()) {
+        setCurrentLog(null);
+        setContent("");
+        setOriginalContent("");
+        setSaveState("idle");
+        setShowDeleteConfirm(false);
+        setSuggestions([]);
+        setAnalysisState("idle");
+        setAnalysisError("");
+        setResolvingSuggestionId(null);
+      }
 
       await loadHistory();
     } catch (deleteError) {
@@ -692,9 +873,11 @@ export default function DailyLogPage() {
         deleteError
       );
 
-      setError(
-        "Unable to delete this entry."
-      );
+      if (isCurrentOperation()) {
+        setError(
+          "Unable to delete this entry."
+        );
+      }
     }
   }
 
@@ -702,6 +885,17 @@ export default function DailyLogPage() {
     suggestionId: number,
     action: "accept" | "dismiss"
   ) {
+    const sourceDate =
+      selectedDateRef.current;
+    const sourceDateVersion =
+      selectedDateVersionRef.current;
+    const isCurrentOperation = () => (
+      isCurrentDate(
+        sourceDate,
+        sourceDateVersion
+      )
+    );
+
     try {
       setResolvingSuggestionId(
         suggestionId
@@ -729,28 +923,34 @@ export default function DailyLogPage() {
         );
       }
 
-      setSuggestions((current) =>
-        current.filter(
-          (suggestion) =>
-            suggestion.id !==
-            suggestionId
-        )
-      );
+      if (isCurrentOperation()) {
+        setSuggestions((current) =>
+          current.filter(
+            (suggestion) =>
+              suggestion.id !==
+              suggestionId
+          )
+        );
+      }
     } catch (actionError) {
       console.error(
         "Daily Log suggestion action error:",
         actionError
       );
 
-      setAnalysisError(
-        actionError instanceof Error
-          ? actionError.message
-          : "Unable to update this suggestion."
-      );
+      if (isCurrentOperation()) {
+        setAnalysisError(
+          actionError instanceof Error
+            ? actionError.message
+            : "Unable to update this suggestion."
+        );
+      }
     } finally {
-      setResolvingSuggestionId(
-        null
-      );
+      if (isCurrentOperation()) {
+        setResolvingSuggestionId(
+          null
+        );
+      }
     }
   }
 
