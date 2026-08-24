@@ -7,6 +7,8 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from wins.models import Win
+
 from .models import Habit, HabitCompletion
 
 
@@ -142,6 +144,38 @@ class HabitAPITestCase(APITestCase):
             completed_at=completion_date,
             status=completion_status,
         )
+
+    def create_habit_via_api(
+        self,
+        *,
+        title="Read every day",
+    ):
+        response = self.client.post(
+            self.HABITS_URL,
+            {
+                "title": title,
+                "trigger": "After breakfast",
+                "action": "Read one page",
+                "reward": "Make coffee",
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED,
+        )
+
+        return Habit.objects.get(
+            id=response.data["id"]
+        )
+
+    def get_brain_habits(self):
+        self.user.brain.refresh_from_db()
+
+        return self.user.brain.data[
+            "habits"
+        ]
 
     # ---------------------------------------------------------
     # Authentication
@@ -1765,4 +1799,373 @@ class HabitAPITestCase(APITestCase):
         self.assertEqual(
             response.status_code,
             status.HTTP_404_NOT_FOUND,
+        )
+
+    # ---------------------------------------------------------
+    # Brain and Wins integration
+    # ---------------------------------------------------------
+
+    def test_create_habit_syncs_brain(self):
+        habit = self.create_habit_via_api(
+            title="Learn English"
+        )
+
+        brain_habits = self.get_brain_habits()
+
+        self.assertEqual(
+            len(brain_habits),
+            1,
+        )
+
+        self.assertEqual(
+            brain_habits[0],
+            {
+                "id": habit.id,
+                "title": "Learn English",
+                "trigger": "After breakfast",
+                "action": "Read one page",
+                "reward": "Make coffee",
+                "status": Habit.Status.ACTIVE,
+                "streak": 0,
+                "today_status": "pending",
+                "consecutive_misses": 0,
+            },
+        )
+
+    def test_patch_habit_syncs_brain(self):
+        habit = self.create_habit_via_api()
+
+        response = self.client.patch(
+            self.habit_detail_url(
+                habit.id
+            ),
+            {
+                "title": "Updated habit",
+                "action": "Read ten pages",
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        brain_habit = self.get_brain_habits()[0]
+
+        self.assertEqual(
+            brain_habit["title"],
+            "Updated habit",
+        )
+
+        self.assertEqual(
+            brain_habit["action"],
+            "Read ten pages",
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 10),
+    )
+    def test_complete_habit_syncs_brain(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+
+        response = self.client.post(
+            self.habit_complete_url(
+                habit.id
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        habit.refresh_from_db()
+        brain_habit = self.get_brain_habits()[0]
+
+        self.assertEqual(
+            habit.streak,
+            1,
+        )
+
+        self.assertEqual(
+            brain_habit["streak"],
+            1,
+        )
+
+        self.assertEqual(
+            brain_habit["today_status"],
+            HabitCompletion.Status.COMPLETED,
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 10),
+    )
+    def test_miss_habit_syncs_brain(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+
+        response = self.client.post(
+            self.habit_miss_url(
+                habit.id
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        brain_habit = self.get_brain_habits()[0]
+
+        self.assertEqual(
+            brain_habit["streak"],
+            0,
+        )
+
+        self.assertEqual(
+            brain_habit["today_status"],
+            HabitCompletion.Status.MISSED,
+        )
+
+        self.assertEqual(
+            brain_habit["consecutive_misses"],
+            1,
+        )
+
+    def test_archive_and_restore_habit_sync_brain(self):
+        habit = self.create_habit_via_api()
+
+        archive_response = self.client.post(
+            self.habit_archive_url(
+                habit.id
+            )
+        )
+
+        self.assertEqual(
+            archive_response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        self.assertEqual(
+            self.get_brain_habits(),
+            [],
+        )
+
+        restore_response = self.client.post(
+            self.habit_restore_url(
+                habit.id
+            )
+        )
+
+        self.assertEqual(
+            restore_response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        brain_habits = self.get_brain_habits()
+
+        self.assertEqual(
+            len(brain_habits),
+            1,
+        )
+
+        self.assertEqual(
+            brain_habits[0]["id"],
+            habit.id,
+        )
+
+        self.assertEqual(
+            brain_habits[0]["status"],
+            Habit.Status.ACTIVE,
+        )
+
+    def test_delete_habit_removes_it_from_brain(self):
+        deleted_habit = self.create_habit_via_api(
+            title="Delete me"
+        )
+
+        remaining_habit = self.create_habit_via_api(
+            title="Keep me"
+        )
+
+        response = self.client.delete(
+            self.habit_detail_url(
+                deleted_habit.id
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT,
+        )
+
+        brain_habits = self.get_brain_habits()
+
+        self.assertEqual(
+            [
+                brain_habit["id"]
+                for brain_habit in brain_habits
+            ],
+            [remaining_habit.id],
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 10),
+    )
+    def test_streak_milestone_creates_automatic_win(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+        first_day = date(2026, 8, 4)
+
+        self.set_habit_created_date(
+            habit,
+            first_day,
+        )
+
+        for offset in range(6):
+            self.create_completion(
+                habit,
+                first_day
+                + timedelta(days=offset),
+            )
+
+        response = self.client.post(
+            self.habit_complete_url(
+                habit.id
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        habit.refresh_from_db()
+
+        self.assertEqual(
+            habit.streak,
+            7,
+        )
+
+        win = Win.objects.get(
+            user=self.user,
+            source=Win.HABIT,
+        )
+
+        self.assertEqual(
+            win.event_key,
+            f"habit_streak:{habit.id}:7",
+        )
+
+        self.assertEqual(
+            win.size,
+            Win.SMALL,
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 10),
+    )
+    def test_streak_milestone_win_is_idempotent(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+        first_day = date(2026, 8, 4)
+
+        self.set_habit_created_date(
+            habit,
+            first_day,
+        )
+
+        for offset in range(6):
+            self.create_completion(
+                habit,
+                first_day
+                + timedelta(days=offset),
+            )
+
+        self.client.post(
+            self.habit_complete_url(
+                habit.id
+            )
+        )
+
+        self.client.post(
+            self.habit_complete_url(
+                habit.id
+            )
+        )
+
+        self.assertEqual(
+            Win.objects.filter(
+                user=self.user,
+                event_key=(
+                    f"habit_streak:{habit.id}:7"
+                ),
+            ).count(),
+            1,
+        )
+
+    @patch(
+        "django.utils.timezone.localdate",
+        return_value=date(2026, 8, 10),
+    )
+    def test_non_milestone_actions_do_not_create_win(
+        self,
+        mocked_localdate,
+    ):
+        habit = self.create_habit()
+
+        self.client.patch(
+            self.habit_detail_url(
+                habit.id
+            ),
+            {
+                "title": "Updated habit",
+            },
+            format="json",
+        )
+
+        self.client.post(
+            self.habit_miss_url(
+                habit.id
+            )
+        )
+
+        self.client.post(
+            self.habit_archive_url(
+                habit.id
+            )
+        )
+
+        self.client.post(
+            self.habit_restore_url(
+                habit.id
+            )
+        )
+
+        self.client.post(
+            self.habit_complete_url(
+                habit.id
+            )
+        )
+
+        self.assertEqual(
+            Win.objects.filter(
+                user=self.user,
+                source=Win.HABIT,
+            ).count(),
+            0,
         )

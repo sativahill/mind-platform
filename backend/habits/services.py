@@ -2,7 +2,17 @@ from typing import Any
 
 from django.db import transaction
 
+from brain.services import deep_merge_dict
+from wins.services import create_habit_streak_win
+
 from .models import Habit
+
+
+HABIT_STREAK_MILESTONES = {
+    7,
+    30,
+    100,
+}
 
 
 def serialize_habit_for_brain(
@@ -75,14 +85,10 @@ def sync_brain_habits(
     user,
 ) -> None:
     """
-    Brain integration boundary.
+    Rebuild the user's habits section from current database state.
 
-    Do not implement a second Brain storage mechanism here.
-
-    This function is intentionally the single integration point
-    for Habit -> Brain synchronization. Connect it to the existing
-    Brain service used by Daily Log / Goals / Board once that
-    service is imported here.
+    This is the single Habit -> Brain integration point and uses
+    the same merge contract as the other integrated modules.
 
     Example shape that should be sent to Brain:
 
@@ -102,11 +108,25 @@ def sync_brain_habits(
             ]
         }
 
-    Do not create or update Brain models directly from this module
-    until the project's existing Brain service contract is used.
     """
-    _ = serialize_user_habits_for_brain(
+    serialized_habits = serialize_user_habits_for_brain(
         user
+    )
+
+    brain = user.brain
+    brain_data = brain.data or {}
+
+    brain.data = deep_merge_dict(
+        brain_data,
+        {
+            "habits": serialized_habits,
+        },
+    )
+
+    brain.save(
+        update_fields=[
+            "data",
+        ]
     )
 
 
@@ -115,6 +135,7 @@ def finalize_habit_change(
     habit: Habit,
     *,
     refresh_streak: bool = False,
+    check_streak_milestone: bool = False,
 ) -> Habit:
     """
     Finalize any Habit mutation.
@@ -129,6 +150,16 @@ def finalize_habit_change(
     sync_brain_habits(
         habit.user
     )
+
+    if (
+        check_streak_milestone
+        and habit.streak
+        in HABIT_STREAK_MILESTONES
+    ):
+        create_habit_streak_win(
+            habit=habit,
+            streak=habit.streak,
+        )
 
     return habit
 

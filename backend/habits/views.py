@@ -8,6 +8,10 @@ from rest_framework.views import APIView
 
 from .models import Habit, HabitCompletion
 from .serializers import HabitSerializer
+from .services import (
+    finalize_habit_change,
+    finalize_habit_delete,
+)
 
 
 def get_user_habit(
@@ -92,6 +96,10 @@ class HabitView(APIView):
             status=Habit.Status.ACTIVE,
         )
 
+        finalize_habit_change(
+            habit
+        )
+
         return Response(
             HabitSerializer(
                 habit
@@ -147,6 +155,10 @@ class HabitDetailView(APIView):
             serializer.save()
         )
 
+        finalize_habit_change(
+            updated_habit
+        )
+
         return Response(
             HabitSerializer(
                 updated_habit
@@ -163,7 +175,13 @@ class HabitDetailView(APIView):
             habit_id,
         )
 
+        user = habit.user
+
         habit.delete()
+
+        finalize_habit_delete(
+            user
+        )
 
         return Response(
             status=204
@@ -216,7 +234,11 @@ class HabitCompleteView(APIView):
             },
         )
 
-        habit.refresh_streak()
+        finalize_habit_change(
+            habit,
+            refresh_streak=True,
+            check_streak_milestone=True,
+        )
 
         return Response(
             HabitSerializer(
@@ -272,7 +294,10 @@ class HabitMissView(APIView):
             },
         )
 
-        habit.refresh_streak()
+        finalize_habit_change(
+            habit,
+            refresh_streak=True,
+        )
 
         return Response(
             HabitSerializer(
@@ -311,6 +336,10 @@ class HabitArchiveView(APIView):
                 ]
             )
 
+        finalize_habit_change(
+            habit
+        )
+
         return Response(
             HabitSerializer(
                 habit
@@ -348,7 +377,10 @@ class HabitRestoreView(APIView):
                 ]
             )
 
-        habit.refresh_streak()
+        finalize_habit_change(
+            habit,
+            refresh_streak=True,
+        )
 
         return Response(
             HabitSerializer(
