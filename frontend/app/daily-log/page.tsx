@@ -642,11 +642,31 @@ export default function DailyLogPage() {
   );
 
   useEffect(() => {
-    loadHistory();
+    let active = true;
+
+    void Promise.resolve().then(() => {
+      if (active) {
+        void loadHistory();
+      }
+    });
+
+    return () => {
+      active = false;
+    };
   }, [loadHistory]);
 
   useEffect(() => {
-    loadSelectedLog(selectedDate);
+    let active = true;
+
+    void Promise.resolve().then(() => {
+      if (active) {
+        void loadSelectedLog(selectedDate);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
   }, [
     selectedDate,
     loadSelectedLog,

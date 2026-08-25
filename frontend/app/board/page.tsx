@@ -425,7 +425,17 @@ export default function BoardPage() {
 
 
   useEffect(() => {
-    void loadBoard();
+    let active = true;
+
+    void Promise.resolve().then(() => {
+      if (active) {
+        void loadBoard();
+      }
+    });
+
+    return () => {
+      active = false;
+    };
   }, [loadBoard]);
 
 

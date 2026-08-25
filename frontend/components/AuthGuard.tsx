@@ -26,7 +26,17 @@ export default function AuthGuard({
       return;
     }
 
-    setIsReady(true);
+    let active = true;
+
+    void Promise.resolve().then(() => {
+      if (active) {
+        setIsReady(true);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
   }, [router]);
 
   if (!isReady) {
