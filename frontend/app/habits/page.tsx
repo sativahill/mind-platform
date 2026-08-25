@@ -425,7 +425,17 @@ export default function HabitsPage() {
 
 
   useEffect(() => {
-    void loadHabits();
+    let active = true;
+
+    void Promise.resolve().then(() => {
+      if (active) {
+        void loadHabits();
+      }
+    });
+
+    return () => {
+      active = false;
+    };
   }, [loadHabits]);
 
 

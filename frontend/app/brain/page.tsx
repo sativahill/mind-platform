@@ -532,9 +532,16 @@ export default function BrainPage() {
   }, []);
 
   useEffect(() => {
-    loadBrain();
+    let active = true;
+
+    void Promise.resolve().then(() => {
+      if (active) {
+        void loadBrain();
+      }
+    });
 
     return () => {
+      active = false;
       requestIdRef.current += 1;
     };
   }, [loadBrain]);

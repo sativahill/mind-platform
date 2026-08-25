@@ -366,7 +366,17 @@ export default function WinsPage() {
   );
 
   useEffect(() => {
-    loadWins();
+    let active = true;
+
+    void Promise.resolve().then(() => {
+      if (active) {
+        void loadWins();
+      }
+    });
+
+    return () => {
+      active = false;
+    };
   }, [loadWins]);
 
   function resetComposer() {
