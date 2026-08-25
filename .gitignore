@@ -1,17 +1,30 @@
 # Python
 backend/venv/
+backend/.venv/
 **/__pycache__/
 *.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.sqlite3
 
 # Environment
 backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Generated backend files
+backend/media/
+backend/uploads/
+backend/staticfiles/
 
 # Next.js
 frontend/.next/
 frontend/node_modules/
 
-# VS Code
+# IDEs
 .vscode/
+.idea/
 
 # OS
 .DS_Store
