@@ -1,4 +1,4 @@
-# PROJECT
+# MIND
 
 A personal AI self-development platform that connects reflection, goals, tasks, habits, wins, and AI conversations through a shared memory.
 
