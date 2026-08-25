@@ -7,6 +7,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { apiUrl } from "@/lib/api";
+import BrandMark from "@/components/BrandMark";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -83,10 +84,10 @@ export default function LoginPage() {
           className="login-logo"
           aria-label="Return to the landing page"
         >
-          <span className="login-circle" />
+          <BrandMark className="login-logo-mark" />
 
           <span className="login-text">
-            PROJECT
+            MIND
           </span>
         </Link>
       </header>
@@ -206,7 +207,7 @@ export default function LoginPage() {
         </form>
 
         <p className="login-footer">
-          New to PROJECT?{" "}
+          New to MIND?{" "}
           <Link href="/register">
             Create an account
           </Link>

@@ -14,8 +14,8 @@
 
     padding: 100px 24px 90px;
 
-    background: #0c0c0f;
-    color: #f2eee8;
+    background: var(--color-background);
+    color: var(--color-text);
 
     isolation: isolate;
 }
@@ -78,10 +78,10 @@
     background:
         radial-gradient(
             circle at 50% 38%,
-            rgba(255, 255, 255, 0.035),
+            var(--color-surface-hover),
             transparent 43%
         ),
-        #0c0c0f;
+        var(--color-background);
 }
 
 .register-background::before {
@@ -184,7 +184,7 @@
     color: rgba(218, 215, 211, 0.65);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -227,16 +227,16 @@
     width: 100%;
     margin: 0;
 
-    color: #f0ece6;
+    color: var(--color-text);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: clamp(62px, 5vw, 78px);
-    font-weight: 400;
+    font-weight: 500;
 
     line-height: 0.95;
     letter-spacing: -0.055em;
@@ -250,7 +250,7 @@
     color: rgba(183, 180, 184, 0.48);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -281,7 +281,7 @@
     color: rgba(225, 222, 218, 0.56);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -307,11 +307,11 @@
     outline: none;
     background: transparent;
 
-    color: #f2eee8;
+    color: var(--color-text);
     caret-color: #8065ee;
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -338,8 +338,8 @@
 .register-input:-webkit-autofill,
 .register-input:-webkit-autofill:hover,
 .register-input:-webkit-autofill:focus {
-    -webkit-text-fill-color: #f2eee8;
-    box-shadow: 0 0 0 1000px #0c0c0f inset;
+    -webkit-text-fill-color: var(--color-text);
+    box-shadow: 0 0 0 1000px var(--color-background) inset;
     transition: background-color 9999s ease-in-out 0s;
 }
 
@@ -369,7 +369,7 @@
     color: rgba(206, 203, 207, 0.46);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -402,7 +402,7 @@
     color: rgba(240, 132, 132, 0.88);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -435,14 +435,14 @@
     justify-content: center;
     gap: 9px;
 
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--color-border);
     border-radius: 999px;
 
     background: #8064ee;
-    color: #ffffff;
+    color: var(--color-on-accent);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -518,7 +518,7 @@
     text-align: center;
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -533,7 +533,7 @@
 }
 
 .register-footer a:hover {
-    color: #ffffff;
+    color: var(--color-on-accent);
 }
 
 /* ==========================================================
@@ -554,7 +554,7 @@
     color: rgba(174, 171, 177, 0.34);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 

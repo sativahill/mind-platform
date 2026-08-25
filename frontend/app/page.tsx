@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandMark from "@/components/BrandMark";
 
 import "./landing.css";
 
@@ -19,12 +20,12 @@ export default function LandingPage() {
         <Link
           href="/"
           className="landing-logo"
-          aria-label="PROJECT home"
+          aria-label="MIND home"
         >
-          <span className="landing-logo-circle" />
+          <BrandMark className="landing-logo-mark" />
 
           <span className="landing-logo-text">
-            PROJECT
+            MIND
           </span>
         </Link>
       </header>

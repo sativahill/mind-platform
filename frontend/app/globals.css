@@ -7,14 +7,82 @@
 /* ========================================================= */
 
 :root {
-  --background: #0d0d0f;
-  --foreground: #f4efe8;
+  --font-mind: system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 
-  --muted: #8a8a92;
+  --color-background: #0d0b12;
+  --color-background-soft: #121018;
+  --color-surface: #16131d;
+  --color-surface-elevated: #1c1825;
+  --color-border: rgba(239, 232, 246, 0.1);
+  --color-border-strong: rgba(239, 232, 246, 0.16);
+  --color-line-faint: rgba(239, 232, 246, 0.055);
+  --color-surface-tint: rgba(255, 255, 255, 0.012);
+  --color-surface-soft: rgba(255, 255, 255, 0.025);
+  --color-surface-hover: rgba(255, 255, 255, 0.035);
+  --color-text: #f2edf0;
+  --color-text-secondary: #c7bdc9;
+  --color-text-muted: #8d8391;
+  --color-accent: #9b7cf4;
+  --color-accent-hover: #ae95f7;
+  --color-accent-soft: rgba(155, 124, 244, 0.12);
+  --color-on-accent: #fffafc;
+  --color-input: rgba(255, 255, 255, 0.025);
+  --color-danger: #d3999e;
+  --color-danger-soft: rgba(201, 131, 138, 0.09);
+  --color-overlay: rgba(8, 5, 12, 0.72);
+  --shadow-panel: 0 24px 70px rgba(4, 2, 8, 0.28);
 
-  --border: #2a2a31;
+  --radius-sm: 9px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
 
-  --purple: #8367f2;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  --navbar-height: 68px;
+  --page-gutter: clamp(20px, 4vw, 48px);
+  --content-width: 1120px;
+  --content-wide: 1280px;
+
+  /* Compatibility aliases used by the existing page styles. */
+  --background: var(--color-background);
+  --foreground: var(--color-text);
+  --muted: var(--color-text-muted);
+  --border: var(--color-border);
+  --purple: var(--color-accent);
+}
+
+html[data-theme="light"] {
+  --color-background: #f6f0f4;
+  --color-background-soft: #f0e8ee;
+  --color-surface: #faf5f8;
+  --color-surface-elevated: #fdf8fb;
+  --color-border: rgba(74, 55, 78, 0.12);
+  --color-border-strong: rgba(74, 55, 78, 0.2);
+  --color-line-faint: rgba(74, 55, 78, 0.075);
+  --color-surface-tint: rgba(74, 55, 78, 0.018);
+  --color-surface-soft: rgba(74, 55, 78, 0.035);
+  --color-surface-hover: rgba(180, 111, 159, 0.085);
+  --color-text: #312b32;
+  --color-text-secondary: #665d68;
+  --color-text-muted: #8b808d;
+  --color-accent: #b46f9f;
+  --color-accent-hover: #a45f91;
+  --color-accent-soft: rgba(180, 111, 159, 0.13);
+  --color-input: rgba(86, 61, 82, 0.035);
+  --color-danger: #a95f6b;
+  --color-danger-soft: rgba(169, 95, 107, 0.09);
+  --color-overlay: rgba(50, 35, 49, 0.34);
+  --shadow-panel: 0 24px 70px rgba(71, 48, 66, 0.1);
 }
 
 /* ========================================================= */
@@ -39,6 +107,8 @@
 html {
   scroll-behavior: smooth;
 
+  background: var(--color-background);
+
   text-rendering: optimizeLegibility;
 
   -webkit-font-smoothing: antialiased;
@@ -55,11 +125,14 @@ body {
 
   overflow-x: hidden;
 
-  background: var(--background);
+  background: var(--color-background);
 
-  color: var(--foreground);
+  color: var(--color-text);
 
-  font-family: var(--font-inter);
+  font-family: var(--font-mind);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.55;
 
   text-rendering: optimizeLegibility;
 
@@ -73,11 +146,11 @@ body {
 /* ========================================================= */
 
 .serif {
-  font-family: var(--font-serif);
+  font-family: inherit;
 }
 
 .inter {
-  font-family: var(--font-inter);
+  font-family: inherit;
 }
 
 /* ========================================================= */
@@ -85,8 +158,8 @@ body {
 /* ========================================================= */
 
 ::selection {
-  background: rgba(131, 103, 242, 0.28);
-  color: white;
+  background: var(--color-accent-soft);
+  color: var(--color-text);
 }
 
 /* ========================================================= */
@@ -98,16 +171,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #111113;
+  background: var(--color-background-soft);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2c2c33;
+  background: var(--color-border-strong);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3c3c45;
+  background: var(--color-text-muted);
 }
 
 /* ========================================================= */
@@ -134,4 +207,594 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.brand-mark,
+.brain-line-icon {
+  display: block;
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+.brand-mark path,
+.brain-line-icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.brand-mark path {
+  stroke-width: 2.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.brain-line-icon path {
+  stroke-width: 1.45;
+}
+
+/* Shared type and layout rhythm for protected pages. */
+html[data-theme] body :where(
+  .brain-heading h1,
+  .daily-log-brand h1,
+  .wins-heading h1,
+  .goals-title-row h1,
+  .board-heading h1,
+  .habits-heading h1,
+  .chat-page-heading h1
+) {
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: clamp(32px, 3vw, 42px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+html[data-theme] body :where(
+  .brain-shell,
+  .wins-shell,
+  .habits-shell,
+  .daily-log-shell,
+  .chat-shell
+) {
+  width: min(var(--content-width), calc(100% - (var(--page-gutter) * 2)));
+}
+
+html[data-theme] body :where(.goals-shell, .home-container) {
+  width: min(var(--content-wide), calc(100% - (var(--page-gutter) * 2)));
+}
+
+html[data-theme] body .board-shell {
+  width: min(1200px, calc(100% - (var(--page-gutter) * 2)));
+}
+
+html[data-theme] body :where(
+  .home-page,
+  .brain-page,
+  .daily-log-page,
+  .wins-page,
+  .goals-page,
+  .board-page,
+  .habits-page
+) {
+  min-height: calc(100svh - var(--navbar-height));
+}
+
+html[data-theme] body .chat-page {
+  height: calc(100svh - var(--navbar-height));
+}
+
+/* Shared control language, scoped to existing primary actions. */
+html[data-theme] body :where(
+  .landing-button,
+  .login-button,
+  .register-button,
+  .wins-add-button,
+  .wins-submit-button,
+  .goals-add-button,
+  .goals-form-submit,
+  .board-add-button,
+  .habits-add-button,
+  .chat-send-button
+) {
+  min-height: 42px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+html[data-theme] body :where(
+  .input,
+  .register-input,
+  .wins-field input,
+  .wins-field textarea,
+  .goals-field input,
+  .goals-field textarea,
+  .goal-task-form input,
+  .goal-task-form textarea,
+  .board-add-form input,
+  .board-add-form select,
+  .habit-form input,
+  .chat-create-form input
+) {
+  border-color: var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-input);
+  color: var(--color-text);
+  font-family: inherit;
+}
+
+html[data-theme] body :where(
+  .input,
+  .register-input,
+  .wins-field input,
+  .goals-field input,
+  .goal-task-form input,
+  .board-add-form input,
+  .board-add-form select,
+  .habit-form input,
+  .chat-create-form input
+) {
+  min-height: 44px;
+}
+
+html[data-theme] body :where(
+  .input,
+  .register-input,
+  .wins-field input,
+  .wins-field textarea,
+  .goals-field input,
+  .goals-field textarea,
+  .goal-task-form input,
+  .goal-task-form textarea,
+  .board-add-form input,
+  .board-add-form select,
+  .habit-form input,
+  .chat-create-form input
+):focus {
+  border-color: color-mix(in srgb, var(--color-accent) 62%, transparent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+/* Shared modal language. */
+html[data-theme] body :where(
+  .wins-composer,
+  .goals-composer,
+  .goals-delete-dialog,
+  .board-modal,
+  .habit-modal,
+  .habit-delete-dialog,
+  .chat-modal
+) {
+  border-color: var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-elevated);
+  box-shadow: var(--shadow-panel);
+}
+
+html[data-theme] body :where(
+  .wins-composer-backdrop-open,
+  .goals-composer-backdrop-open,
+  .goals-dialog-backdrop,
+  .board-modal-backdrop,
+  .habit-modal-backdrop,
+  .habit-delete-backdrop,
+  .chat-modal-backdrop
+) {
+  background: var(--color-overlay);
+}
+
+/* Light theme: explicit coverage of every core page. */
+html[data-theme="light"] body :where(
+  .landing,
+  .login-page,
+  .register-page,
+  .home-page,
+  .brain-page,
+  .daily-log-page,
+  .wins-page,
+  .goals-page,
+  .board-page,
+  .habits-page,
+  .chat-page
+) {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+html[data-theme="light"] body :where(
+  .landing-background,
+  .login-background,
+  .register-background,
+  .home-background,
+  .brain-page-background,
+  .daily-log-background,
+  .wins-background,
+  .goals-background
+) {
+  background:
+    radial-gradient(
+      circle at 50% 18%,
+      rgba(197, 139, 177, 0.13),
+      transparent 48%
+    ),
+    var(--color-background);
+}
+
+html[data-theme="light"] body :where(
+  .landing-vignette,
+  .login-vignette,
+  .register-vignette,
+  .home-vignette
+) {
+  background: radial-gradient(
+    circle at center,
+    transparent 34%,
+    rgba(111, 77, 102, 0.055) 100%
+  );
+}
+
+html[data-theme="light"] body :where(
+  .landing-background,
+  .login-background,
+  .register-background,
+  .home-background,
+  .brain-page-background,
+  .daily-log-background,
+  .wins-background,
+  .goals-background
+)::before {
+  opacity: 0.16;
+  background-image: radial-gradient(
+    circle,
+    rgba(83, 60, 79, 0.18) 0.6px,
+    transparent 0.75px
+  );
+}
+
+html[data-theme="light"] body :where(
+  .landing,
+  .login-page,
+  .register-page,
+  .home-page,
+  .brain-page,
+  .daily-log-page,
+  .wins-page,
+  .goals-page,
+  .board-page,
+  .habits-page,
+  .chat-page
+) :where(h1, h2, h3, strong, label, legend) {
+  color: var(--color-text);
+}
+
+html[data-theme="light"] body :where(
+  .landing,
+  .login-page,
+  .register-page,
+  .home-page,
+  .brain-page,
+  .daily-log-page,
+  .wins-page,
+  .goals-page,
+  .board-page,
+  .habits-page,
+  .chat-page
+) :where(p, time, small) {
+  color: var(--color-text-secondary);
+}
+
+html[data-theme="light"] body :where(
+  .landing,
+  .login-page,
+  .register-page,
+  .home-page,
+  .brain-page,
+  .daily-log-page,
+  .wins-page,
+  .goals-page,
+  .board-page,
+  .habits-page,
+  .chat-page
+) a:not([class*="button"]) {
+  color: var(--color-text-secondary);
+}
+
+html[data-theme="light"] body :where(
+  .daily-log-journal,
+  .daily-log-timeline,
+  .daily-log-timeline-item-active,
+  .brain-array-item,
+  .wins-filters,
+  .wins-size-option,
+  .win-item-large,
+  .goals-filters,
+  .wins-composer,
+  .goals-workspace,
+  .goals-list-panel,
+  .goal-detail-panel,
+  .goal-task-form,
+  .goals-composer,
+  .goals-delete-dialog,
+  .board-column,
+  .board-task,
+  .board-task-status-actions,
+  .board-modal,
+  .habit-row,
+  .habit-detail-today button,
+  .habit-modal,
+  .habit-delete-dialog,
+  .chat-picker-item,
+  .chat-picker-add,
+  .chat-window,
+  .chat-composer,
+  .chat-empty-page,
+  .chat-modal
+) {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: none;
+}
+
+html[data-theme="light"] body :where(
+  .daily-log-editor,
+  .chat-window-composer,
+  .habit-detail-actions,
+  .goals-form-footer
+) {
+  border-color: var(--color-border);
+  background: var(--color-surface-elevated);
+}
+
+html[data-theme="light"] body .board-add-form option {
+  background: var(--color-surface-elevated);
+  color: var(--color-text);
+}
+
+html[data-theme="light"] body :where(
+  .brain-field:hover,
+  .win-item-main:hover,
+  .goal-card-main:hover,
+  .habit-row:hover,
+  .chat-picker-item:hover,
+  .daily-log-timeline-item:hover
+) {
+  background: var(--color-accent-soft);
+}
+
+html[data-theme="light"] body :where(
+  .brain-header,
+  .brain-section,
+  .brain-sections,
+  .wins-header,
+  .wins-year-label,
+  .goals-header,
+  .goals-toolbar,
+  .board-header,
+  .board-column-header,
+  .habits-header,
+  .habits-tabs,
+  .chat-page-header,
+  .chat-window-header,
+  .daily-log-topbar,
+  .daily-log-editor-header,
+  .daily-log-timeline-header
+) {
+  border-color: var(--color-border);
+}
+
+html[data-theme="light"] body :where(
+  .daily-log-textarea,
+  .chat-composer textarea
+) {
+  color: var(--color-text);
+  caret-color: var(--color-accent);
+}
+
+html[data-theme="light"] body :where(
+  .daily-log-textarea,
+  .chat-composer textarea,
+  input,
+  textarea
+)::placeholder {
+  color: var(--color-text-muted);
+}
+
+html[data-theme="light"] body :where(
+  .landing-button-primary,
+  .login-button,
+  .register-button,
+  .wins-submit-button,
+  .goals-form-submit,
+  .chat-send-button
+) {
+  border-color: transparent;
+  background: var(--color-accent);
+  color: #fffafc;
+}
+
+html[data-theme="light"] body :where(
+  .landing-button-secondary,
+  .wins-add-button,
+  .goals-add-button,
+  .board-add-button,
+  .habits-add-button
+) {
+  border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+
+html[data-theme="light"] body :where(
+  .daily-log-analysis-status,
+  .daily-log-suggestion,
+  .wins-source-note,
+  .goal-next-task,
+  .board-task.is-done,
+  .habit-done-button.is-completed,
+  .chat-message.is-assistant
+) {
+  border-color: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  background: var(--color-accent-soft);
+}
+
+html[data-theme] body :where(
+  .landing-logo-mark,
+  .login-logo-mark,
+  .register-logo-mark
+) {
+  width: 28px;
+  height: 23px;
+  color: var(--color-accent);
+}
+
+html[data-theme] body :where(
+  .landing-logo-text,
+  .login-text,
+  .register-text
+) {
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+html[data-theme] body .brain-heading-icon {
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  color: var(--color-accent);
+}
+
+html[data-theme="light"] body .board-page {
+  --board-bg: var(--color-background);
+  --board-surface: var(--color-surface);
+  --board-surface-soft: var(--color-surface-elevated);
+  --board-line: var(--color-border);
+  --board-line-strong: var(--color-border-strong);
+  --board-text: var(--color-text);
+  --board-text-soft: var(--color-text-secondary);
+  --board-text-muted: var(--color-text-muted);
+  --board-text-faint: var(--color-text-muted);
+  --board-accent: var(--color-accent);
+  --board-accent-bright: var(--color-accent-hover);
+  --board-accent-soft: var(--color-accent-soft);
+  --board-danger: var(--color-danger);
+  --board-danger-soft: var(--color-danger-soft);
+}
+
+html[data-theme="light"] body .habits-page {
+  --habits-bg: var(--color-background);
+  --habits-surface: var(--color-surface);
+  --habits-line: var(--color-border);
+  --habits-line-strong: var(--color-border-strong);
+  --habits-text: var(--color-text);
+  --habits-text-soft: var(--color-text-secondary);
+  --habits-text-muted: var(--color-text-muted);
+  --habits-text-faint: var(--color-text-muted);
+  --habits-accent: var(--color-accent);
+  --habits-accent-bright: var(--color-accent-hover);
+  --habits-accent-soft: var(--color-accent-soft);
+  --habits-danger: var(--color-danger);
+  --habits-danger-soft: var(--color-danger-soft);
+}
+
+html[data-theme="light"] body .chat-page {
+  --chat-bg: var(--color-background);
+  --chat-surface: var(--color-surface);
+  --chat-surface-soft: var(--color-surface-elevated);
+  --chat-line: var(--color-border);
+  --chat-line-strong: var(--color-border-strong);
+  --chat-text: var(--color-text);
+  --chat-text-soft: var(--color-text-secondary);
+  --chat-text-muted: var(--color-text-muted);
+  --chat-text-faint: var(--color-text-muted);
+  --chat-accent: var(--color-accent);
+  --chat-accent-bright: var(--color-accent-hover);
+  --chat-accent-soft: var(--color-accent-soft);
+  --chat-danger: var(--color-danger);
+  --chat-danger-soft: var(--color-danger-soft);
+}
+
+html[data-theme="light"] body :where(
+  .landing,
+  .login-page,
+  .register-page,
+  .home-page,
+  .brain-page,
+  .daily-log-page,
+  .wins-page,
+  .goals-page,
+  .board-page,
+  .habits-page,
+  .chat-page
+) :where(span, dt, dd) {
+  color: var(--color-text-secondary);
+}
+
+html[data-theme="light"] body :where(
+  .landing,
+  .login-page,
+  .register-page,
+  .home-page,
+  .brain-page,
+  .daily-log-page,
+  .wins-page,
+  .goals-page,
+  .board-page,
+  .habits-page,
+  .chat-page
+) :where(button, a) > span {
+  color: inherit;
+}
+
+html[data-theme="light"] body :where(
+  .landing-title-primary,
+  .landing-title-secondary,
+  .login-title,
+  .register-title
+) {
+  color: var(--color-text);
+}
+
+html[data-theme="light"] body :where(
+  .landing-logo-text,
+  .login-text,
+  .register-text,
+  .app-navbar-logo-text
+) {
+  color: var(--color-text);
+}
+
+@media (max-width: 700px) {
+  :root {
+    --page-gutter: 18px;
+  }
 }

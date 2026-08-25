@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import ProtectedLayout from "@/components/ProtectedLayout";
+import BrainIcon from "@/components/BrainIcon";
 import { apiFetch } from "@/lib/api";
 
 
@@ -428,7 +429,7 @@ function buildBrainSections(
       key: "identity",
       title: "Identity",
       description: (
-        "Details you have shared with PROJECT."
+        "Details you have shared with MIND."
       ),
       value: data.user,
     },
@@ -452,7 +453,7 @@ function buildBrainSections(
       key: "patterns",
       title: "Patterns",
       description: (
-        "Signals PROJECT has retained over time."
+        "Signals MIND has retained over time."
       ),
       value: data.patterns,
     },
@@ -564,7 +565,7 @@ export default function BrainPage() {
         <div className="brain-shell">
           <header className="brain-header">
             <div className="brain-heading">
-              <span className="brain-heading-mark" />
+              <BrainIcon className="brain-heading-icon" />
 
               <div>
                 <h1>Brain</h1>

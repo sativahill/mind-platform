@@ -8,8 +8,8 @@
     min-height: calc(100svh - 72px);
     overflow: hidden;
 
-    background: #0c0c0f;
-    color: #f1ede7;
+    background: var(--color-background);
+    color: var(--color-text);
 
     isolation: isolate;
 }
@@ -42,7 +42,7 @@
             rgba(91, 62, 196, 0.035),
             transparent 48%
         ),
-        #0c0c0f;
+        var(--color-background);
 }
 
 .goals-background::before {
@@ -125,7 +125,7 @@
 
     padding: 0 2px 22px;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .goals-title-group {
@@ -159,13 +159,13 @@
     color: rgba(244, 239, 233, 0.96);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: clamp(38px, 3.2vw, 42px);
-    font-weight: 400;
+    font-weight: 500;
 
     line-height: 1;
     letter-spacing: -0.042em;
@@ -177,7 +177,7 @@
     color: rgba(195, 188, 201, 0.56);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -204,7 +204,7 @@
     color: rgba(237, 231, 255, 0.96);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -214,7 +214,7 @@
     cursor: pointer;
 
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+        inset 0 1px 0 var(--color-surface-soft);
 
     transition:
         transform 180ms ease,
@@ -226,7 +226,7 @@
 
 .goals-add-button > span {
     font-size: 16px;
-    font-weight: 300;
+    font-weight: 500;
     line-height: 1;
 }
 
@@ -236,7 +236,7 @@
     border-color: rgba(181, 159, 255, 0.58);
 
     background: rgba(128, 96, 235, 0.24);
-    color: #ffffff;
+    color: var(--color-on-accent);
 
     box-shadow:
         0 10px 28px rgba(70, 42, 155, 0.16),
@@ -266,7 +266,7 @@
 
     padding: 4px;
 
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--color-border);
     border-radius: 999px;
 
     background: rgba(255, 255, 255, 0.016);
@@ -289,7 +289,7 @@
     color: rgba(194, 188, 201, 0.48);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -363,7 +363,7 @@
     color: rgba(242, 187, 195, 0.86);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -441,9 +441,9 @@
     background:
         linear-gradient(
             to bottom,
-            rgba(255, 255, 255, 0.035),
+            var(--color-surface-hover),
             rgba(143, 111, 245, 0.12) 44%,
-            rgba(255, 255, 255, 0.035)
+            var(--color-surface-hover)
         );
 
     pointer-events: none;
@@ -544,7 +544,7 @@
     color: rgba(195, 188, 201, 0.56);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -567,13 +567,13 @@
     color: rgba(243, 238, 232, 0.94);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: clamp(26px, 2.25vw, 30px);
-    font-weight: 400;
+    font-weight: 500;
 
     line-height: 1.1;
     letter-spacing: -0.038em;
@@ -597,7 +597,7 @@
 
     border-radius: 999px;
 
-    background: rgba(255, 255, 255, 0.075);
+    background: var(--color-border);
 }
 
 .goal-progress-fill {
@@ -627,12 +627,12 @@
     background:
         linear-gradient(
             90deg,
-            rgba(82, 151, 118, 0.78),
-            rgba(138, 204, 169, 0.9)
+            rgba(126, 93, 229, 0.78),
+            rgba(181, 155, 255, 0.9)
         );
 
     box-shadow:
-        0 0 10px rgba(100, 183, 141, 0.2);
+        0 0 10px rgba(128, 93, 237, 0.2);
 }
 
 .goal-card-archived .goal-progress-fill {
@@ -645,7 +645,7 @@
     color: rgba(224, 215, 235, 0.76);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -666,7 +666,7 @@
     color: rgba(190, 183, 195, 0.52);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -709,7 +709,7 @@
         linear-gradient(
             100deg,
             rgba(255, 255, 255, 0.014) 20%,
-            rgba(255, 255, 255, 0.035) 42%,
+            var(--color-surface-hover) 42%,
             rgba(255, 255, 255, 0.014) 64%
         );
 
@@ -750,13 +750,13 @@
     color: rgba(236, 230, 225, 0.82);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: 29px;
-    font-weight: 400;
+    font-weight: 500;
 
     letter-spacing: -0.04em;
 }
@@ -770,7 +770,7 @@
     color: rgba(184, 177, 190, 0.44);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -793,7 +793,7 @@
     color: rgba(231, 223, 249, 0.83);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -812,7 +812,7 @@
     border-color: rgba(176, 151, 255, 0.48);
 
     background: rgba(126, 93, 229, 0.18);
-    color: #ffffff;
+    color: var(--color-on-accent);
 }
 
 /* ==========================================================
@@ -853,7 +853,7 @@
     color: rgba(184, 177, 190, 0.4);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -947,13 +947,13 @@
     color: rgba(244, 239, 233, 0.94);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: clamp(40px, 3.3vw, 44px);
-    font-weight: 400;
+    font-weight: 500;
 
     line-height: 1.02;
     letter-spacing: -0.047em;
@@ -974,7 +974,7 @@
     color: rgba(206, 199, 211, 0.56);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1017,7 +1017,7 @@
     color: rgba(177, 168, 185, 0.43);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1032,13 +1032,13 @@
     color: rgba(238, 232, 241, 0.9);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: clamp(36px, 3vw, 40px);
-    font-weight: 400;
+    font-weight: 500;
 
     line-height: 0.8;
     letter-spacing: -0.04em;
@@ -1050,7 +1050,7 @@
     color: rgba(173, 149, 239, 0.62);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1069,7 +1069,7 @@
 
     border-radius: 999px;
 
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--color-border);
 }
 
 .goal-detail-progress-track > span {
@@ -1104,7 +1104,7 @@
     color: rgba(205, 197, 209, 0.64);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1118,12 +1118,12 @@
     background:
         linear-gradient(
             90deg,
-            rgba(82, 151, 118, 0.78),
-            rgba(138, 204, 169, 0.9)
+            rgba(126, 93, 229, 0.78),
+            rgba(181, 155, 255, 0.9)
         );
 
     box-shadow:
-        0 0 14px rgba(100, 183, 141, 0.2);
+        0 0 14px rgba(128, 93, 237, 0.2);
 }
 
 /* ==========================================================
@@ -1160,7 +1160,7 @@
     color: rgba(181, 159, 255, 0.67);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1179,7 +1179,7 @@
     color: rgba(242, 236, 244, 0.94);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1195,7 +1195,7 @@
     color: rgba(195, 187, 201, 0.5);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1218,7 +1218,7 @@
     color: rgba(239, 232, 255, 0.94);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1260,7 +1260,7 @@
     color: rgba(194, 185, 201, 0.56);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1277,7 +1277,7 @@
     color: rgba(218, 211, 217, 0.66);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1303,7 +1303,7 @@
     color: rgba(195, 187, 200, 0.52);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1322,7 +1322,7 @@
     color: rgba(177, 153, 255, 0.78);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1357,7 +1357,7 @@
     color: rgba(192, 184, 198, 0.52);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1386,7 +1386,7 @@
     color: rgba(225, 216, 248, 0.73);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1403,7 +1403,7 @@
 
 .goal-plan-add > span {
     font-size: 14px;
-    font-weight: 300;
+    font-weight: 500;
 }
 
 .goal-plan-add:hover {
@@ -1446,7 +1446,7 @@
     color: rgba(235, 229, 235, 0.9);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 }
@@ -1454,7 +1454,7 @@
 .goal-task-form input {
     height: 31px;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+    border-bottom: 1px solid var(--color-line-faint);
 
     font-size: 13px;
     font-weight: 500;
@@ -1488,7 +1488,7 @@
     border-radius: 999px;
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1522,7 +1522,7 @@
     color: rgba(226, 135, 147, 0.7);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1565,11 +1565,11 @@
     border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.012);
+    background: var(--color-surface-tint);
     color: rgba(180, 171, 189, 0.39);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1611,10 +1611,10 @@
 }
 
 .goal-task-done .goal-task-state {
-    border-color: rgba(105, 179, 140, 0.32);
+    border-color: rgba(166, 139, 248, 0.32);
 
-    background: rgba(76, 147, 111, 0.09);
-    color: rgba(137, 207, 171, 0.77);
+    background: rgba(126, 93, 229, 0.09);
+    color: rgba(209, 196, 245, 0.77);
 }
 
 .goal-task-copy {
@@ -1627,7 +1627,7 @@
     color: rgba(224, 218, 223, 0.78);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1643,7 +1643,7 @@
     color: rgba(177, 170, 183, 0.39);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1660,7 +1660,7 @@
     color: rgba(158, 143, 183, 0.4);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1707,7 +1707,7 @@
     color: rgba(180, 172, 187, 0.39);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1718,7 +1718,7 @@
     color: rgba(224, 217, 226, 0.78);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1736,7 +1736,7 @@
     color: rgba(176, 151, 255, 0.67);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1760,9 +1760,9 @@
     background:
         linear-gradient(
             100deg,
-            rgba(255, 255, 255, 0.012) 20%,
+            var(--color-surface-tint) 20%,
             rgba(255, 255, 255, 0.028) 42%,
-            rgba(255, 255, 255, 0.012) 64%
+            var(--color-surface-tint) 64%
         );
 
     background-size: 220% 100%;
@@ -1788,7 +1788,7 @@
     color: rgba(194, 185, 201, 0.56);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1815,7 +1815,7 @@
     color: rgba(190, 181, 197, 0.48);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1829,7 +1829,7 @@
     color: rgba(213, 206, 214, 0.62);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1845,7 +1845,7 @@
     color: rgba(209, 202, 212, 0.61);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1859,7 +1859,7 @@
     color: rgba(184, 176, 190, 0.42);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1889,7 +1889,7 @@
     color: rgba(190, 181, 198, 0.44);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -1999,14 +1999,14 @@
 
     padding: 35px 38px 28px;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+    border-bottom: 1px solid var(--color-line-faint);
 }
 
 .goals-composer-header > div > span {
     color: rgba(167, 147, 219, 0.55);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -2025,13 +2025,13 @@
     color: rgba(244, 239, 233, 0.95);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: 36px;
-    font-weight: 400;
+    font-weight: 500;
 
     line-height: 0.98;
     letter-spacing: -0.05em;
@@ -2047,14 +2047,14 @@
     align-items: center;
     justify-content: center;
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--color-border);
     border-radius: 50%;
 
     background: rgba(255, 255, 255, 0.014);
     color: rgba(203, 195, 209, 0.47);
 
     font-size: 18px;
-    font-weight: 300;
+    font-weight: 500;
 
     cursor: pointer;
 
@@ -2105,7 +2105,7 @@
     color: rgba(203, 195, 208, 0.55);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -2136,7 +2136,7 @@
     color: rgba(239, 233, 238, 0.91);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -2165,7 +2165,7 @@
     height: 50px;
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -2202,7 +2202,7 @@
     color: rgba(228, 139, 151, 0.74);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -2240,7 +2240,7 @@
     border-radius: 999px;
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -2281,7 +2281,7 @@
     color: rgba(239, 232, 255, 0.94);
 
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+        inset 0 1px 0 var(--color-surface-hover);
 }
 
 .goals-form-submit:hover:not(:disabled) {
@@ -2374,7 +2374,7 @@
     color: rgba(225, 136, 148, 0.69);
 
     font-size: 20px;
-    font-weight: 300;
+    font-weight: 500;
 }
 
 .goals-delete-eyebrow {
@@ -2383,7 +2383,7 @@
     color: rgba(210, 119, 132, 0.55);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -2400,13 +2400,13 @@
     color: rgba(243, 237, 232, 0.94);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: 34px;
-    font-weight: 400;
+    font-weight: 500;
 
     letter-spacing: -0.045em;
 }
@@ -2417,7 +2417,7 @@
     color: rgba(186, 178, 191, 0.45);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -2446,7 +2446,7 @@
     border-radius: 999px;
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -2584,7 +2584,7 @@
     .goal-detail-panel {
         overflow: hidden;
 
-        border: 1px solid rgba(255, 255, 255, 0.075);
+        border: 1px solid var(--color-border);
         border-radius: 20px;
 
         background:

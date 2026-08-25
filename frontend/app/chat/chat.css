@@ -1,17 +1,17 @@
 .chat-page {
-  --chat-bg: #0b0b10;
-  --chat-surface: #101016;
+  --chat-bg: var(--color-background);
+  --chat-surface: var(--color-surface);
   --chat-surface-soft: #14141b;
 
-  --chat-line: rgba(255, 255, 255, 0.07);
-  --chat-line-strong: rgba(255, 255, 255, 0.11);
+  --chat-line: var(--color-border);
+  --chat-line-strong: var(--color-border-strong);
 
   --chat-text: #f1edf4;
   --chat-text-soft: #c8c1cd;
   --chat-text-muted: #837b89;
   --chat-text-faint: #5e5863;
 
-  --chat-accent: #987cf2;
+  --chat-accent: var(--color-accent);
   --chat-accent-bright: #b8a3ff;
   --chat-accent-soft: rgba(152, 124, 242, 0.1);
 
@@ -95,7 +95,7 @@
   margin: 0;
 
   font-family:
-    var(--font-serif),
+    var(--font-mind),
     Georgia,
     serif;
 
@@ -206,7 +206,7 @@
   color: rgba(184, 163, 255, 0.54);
 
   font-size: 22px;
-  font-weight: 300;
+  font-weight: 500;
 
   opacity: 0;
   pointer-events: none;
@@ -272,12 +272,12 @@
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.065);
+    var(--color-line-faint);
 
   border-radius: 12px;
 
   background:
-    rgba(255, 255, 255, 0.012);
+    var(--color-surface-tint);
 
   color: #8e8794;
 
@@ -335,7 +335,7 @@
   color: inherit;
 
   font-family:
-    var(--font-serif),
+    var(--font-mind),
     Georgia,
     serif;
 
@@ -370,7 +370,7 @@
   color: #9887c9;
 
   font-size: 27px;
-  font-weight: 300;
+  font-weight: 500;
 
   cursor: pointer;
 
@@ -482,14 +482,14 @@
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.075);
+    var(--color-border);
 
   border-radius: 16px;
 
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.012),
+      var(--color-surface-tint),
       rgba(255, 255, 255, 0.004)
     ),
     #0e0e14;
@@ -538,7 +538,7 @@
 
   border-bottom:
     1px solid
-    rgba(255, 255, 255, 0.065);
+    var(--color-line-faint);
 }
 
 .chat-window-header h2 {
@@ -547,7 +547,7 @@
   color: #e5dfe9;
 
   font-family:
-    var(--font-serif),
+    var(--font-mind),
     Georgia,
     serif;
 
@@ -576,7 +576,7 @@
   scrollbar-width: thin;
 
   scrollbar-color:
-    rgba(255, 255, 255, 0.08)
+    var(--color-border)
     transparent;
 }
 
@@ -592,7 +592,7 @@
   border-radius: 999px;
 
   background:
-    rgba(255, 255, 255, 0.075);
+    var(--color-border);
 }
 
 .chat-message-stream {
@@ -803,7 +803,7 @@
   color: #dad3df;
 
   font-family:
-    var(--font-serif),
+    var(--font-mind),
     Georgia,
     serif;
 
@@ -864,9 +864,9 @@
     linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.022),
-      rgba(255, 255, 255, 0.012)
+      var(--color-surface-tint)
     ),
-    #111117;
+    var(--color-surface);
 
   box-shadow:
     0 10px 26px
@@ -910,7 +910,7 @@
   color: #ddd6e1;
 
   font-family:
-    var(--font-inter),
+    var(--font-mind),
     Arial,
     sans-serif;
 
@@ -986,7 +986,7 @@
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.065);
+    var(--color-line-faint);
 
   border-radius: 16px;
 
@@ -1000,7 +1000,7 @@
   margin: 0;
 
   font-family:
-    var(--font-serif),
+    var(--font-mind),
     Georgia,
     serif;
 
@@ -1066,7 +1066,7 @@
       rgba(152, 124, 242, 0.05),
       transparent 35%
     ),
-    #111117;
+    var(--color-surface);
 
   box-shadow:
     0 32px 90px
@@ -1159,10 +1159,10 @@
 .chat-modal-header h2 {
   margin: 0;
 
-  color: #f0ebf3;
+  color: var(--color-text);
 
   font-family:
-    var(--font-serif),
+    var(--font-mind),
     Georgia,
     serif;
 
@@ -1205,7 +1205,7 @@ label > span {
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.08);
+    var(--color-border);
 
   border-radius: 8px;
 
@@ -1217,7 +1217,7 @@ label > span {
   color: #dad4de;
 
   font-family:
-    var(--font-inter),
+    var(--font-mind),
     Arial,
     sans-serif;
 

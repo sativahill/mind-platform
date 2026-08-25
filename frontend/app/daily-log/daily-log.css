@@ -9,8 +9,8 @@
 
     overflow: hidden;
 
-    background: #0c0c0f;
-    color: #f0ece6;
+    background: var(--color-background);
+    color: var(--color-text);
 
     isolation: isolate;
 }
@@ -28,7 +28,7 @@
             rgba(118, 87, 225, 0.055),
             transparent 46%
         ),
-        #0c0c0f;
+        var(--color-background);
 }
 
 .daily-log-background::before {
@@ -111,7 +111,7 @@
 
     padding: 0 2px 18px;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .daily-log-brand {
@@ -141,13 +141,13 @@
     color: rgba(242, 237, 231, 0.94);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: 27px;
-    font-weight: 400;
+    font-weight: 500;
 
     line-height: 1;
     letter-spacing: -0.035em;
@@ -159,7 +159,7 @@
     color: rgba(208, 203, 211, 0.54);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -266,7 +266,7 @@
     color: rgba(187, 181, 193, 0.48);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -285,13 +285,13 @@
     color: rgba(243, 238, 232, 0.97);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: clamp(38px, 3.2vw, 50px);
-    font-weight: 400;
+    font-weight: 500;
 
     line-height: 0.98;
     letter-spacing: -0.048em;
@@ -305,7 +305,7 @@
     color: rgba(195, 190, 199, 0.5);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -362,12 +362,12 @@
     caret-color: #9a7cf6;
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
 
     line-height: 1.9;
 
@@ -414,7 +414,7 @@
     margin-top: 16px;
     padding-top: 17px;
 
-    border-top: 1px solid rgba(255, 255, 255, 0.075);
+    border-top: 1px solid var(--color-border);
 }
 
 .daily-log-meta {
@@ -425,7 +425,7 @@
     color: rgba(194, 188, 199, 0.45);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -467,10 +467,10 @@
     border-radius: 999px;
 
     background: rgba(126, 94, 235, 0.9);
-    color: #ffffff;
+    color: var(--color-on-accent);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -531,7 +531,7 @@
     color: rgba(235, 145, 145, 0.58);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -553,7 +553,7 @@
     gap: 9px;
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -585,7 +585,7 @@
 }
 
 .daily-log-delete-confirm button:hover {
-    color: #ffffff;
+    color: var(--color-on-accent);
 }
 
 /* ==========================================================
@@ -598,7 +598,7 @@
     color: rgba(238, 151, 151, 0.86);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -634,14 +634,14 @@
 
     padding: 0 23px;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .daily-log-timeline-header > span {
     color: rgba(207, 201, 212, 0.54);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -667,7 +667,7 @@
     color: rgba(224, 218, 228, 0.58);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -783,7 +783,7 @@
     border: 1px solid rgba(215, 207, 222, 0.38);
     border-radius: 50%;
 
-    background: #111116;
+    background: var(--color-surface);
 
     transition:
         transform 180ms ease,
@@ -839,13 +839,13 @@
     color: rgba(239, 234, 229, 0.9);
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
     font-size: 21px;
-    font-weight: 400;
+    font-weight: 500;
 
     line-height: 1;
     letter-spacing: -0.035em;
@@ -857,7 +857,7 @@
     color: rgba(195, 189, 200, 0.46);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -885,7 +885,7 @@
     color: rgba(222, 216, 225, 0.67);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -905,7 +905,7 @@
     color: rgba(190, 184, 194, 0.5);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -949,7 +949,7 @@
         linear-gradient(
             90deg,
             rgba(255, 255, 255, 0.022),
-            rgba(255, 255, 255, 0.065),
+            var(--color-line-faint),
             rgba(255, 255, 255, 0.022)
         );
 
@@ -980,13 +980,13 @@
 .daily-log-timeline-loading > span {
     height: 86px;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+    border-bottom: 1px solid var(--color-line-faint);
 
     background:
         linear-gradient(
             90deg,
             transparent,
-            rgba(255, 255, 255, 0.035),
+            var(--color-surface-hover),
             transparent
         );
 
@@ -1055,7 +1055,7 @@
 .daily-log-analysis-status strong {
     color: rgba(239, 234, 242, 0.9);
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 11px;
     font-weight: 500;
     line-height: 1.3;
@@ -1064,7 +1064,7 @@
 .daily-log-analysis-status div > span {
     color: rgba(202, 194, 208, 0.58);
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 10px;
     line-height: 1.45;
 }
@@ -1089,7 +1089,7 @@
 .daily-log-suggestion-heading > span {
     color: rgba(208, 201, 214, 0.68);
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.1em;
@@ -1110,7 +1110,7 @@
     background: rgba(126, 94, 235, 0.055);
     color: rgba(201, 186, 255, 0.86);
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 9px;
     font-weight: 500;
 }
@@ -1186,7 +1186,7 @@
     background: rgba(126, 94, 235, 0.06);
     color: rgba(202, 186, 255, 0.88);
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 9px;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -1202,9 +1202,9 @@
 
     color: rgba(243, 238, 233, 0.94);
 
-    font-family: var(--font-serif), "Times New Roman", Georgia, serif;
+    font-family: var(--font-mind), "Times New Roman", Georgia, serif;
     font-size: 20px;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 1.15;
     letter-spacing: -0.025em;
 }
@@ -1218,7 +1218,7 @@
 
     color: rgba(202, 195, 207, 0.62);
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 10px;
     line-height: 1.5;
 
@@ -1233,7 +1233,7 @@
 
     color: rgba(190, 176, 239, 0.68);
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 9px;
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -1255,7 +1255,7 @@
 
     border-radius: 999px;
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 10px;
     font-weight: 500;
     white-space: nowrap;
@@ -1291,7 +1291,7 @@
     border: 1px solid rgba(169, 144, 255, 0.28);
 
     background: rgba(126, 94, 235, 0.82);
-    color: #ffffff;
+    color: var(--color-on-accent);
 
     box-shadow: 0 8px 20px rgba(80, 53, 184, 0.16);
 }
@@ -1322,7 +1322,7 @@
 .daily-log-analysis-empty > span {
     color: rgba(199, 192, 204, 0.55);
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 10px;
     line-height: 1.45;
 }
@@ -1337,7 +1337,7 @@
     background: transparent;
     color: rgba(190, 173, 248, 0.86);
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 10px;
     font-weight: 500;
 
@@ -1355,7 +1355,7 @@
 
     color: rgba(240, 157, 157, 0.84);
 
-    font-family: var(--font-inter), Arial, sans-serif;
+    font-family: var(--font-mind), Arial, sans-serif;
     font-size: 10px;
     line-height: 1.45;
 }
@@ -1514,7 +1514,7 @@
         min-height: 320px;
         max-height: 420px;
 
-        border-top: 1px solid rgba(255, 255, 255, 0.075);
+        border-top: 1px solid var(--color-border);
     }
 
     .daily-log-timeline-scroll {

@@ -7,6 +7,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { apiUrl } from "@/lib/api";
+import BrandMark from "@/components/BrandMark";
 
 type RegisterErrorResponse = {
   username?: string[];
@@ -133,10 +134,10 @@ export default function RegisterPage() {
           className="register-logo"
           aria-label="Return to the landing page"
         >
-          <span className="register-circle" />
+          <BrandMark className="register-logo-mark" />
 
           <span className="register-text">
-            PROJECT
+            MIND
           </span>
         </Link>
       </header>

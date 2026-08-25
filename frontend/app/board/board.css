@@ -1,17 +1,17 @@
 .board-page {
-  --board-bg: #0b0b10;
-  --board-surface: #101016;
+  --board-bg: var(--color-background);
+  --board-surface: var(--color-surface);
   --board-surface-soft: #14141b;
 
-  --board-line: rgba(255, 255, 255, 0.07);
-  --board-line-strong: rgba(255, 255, 255, 0.11);
+  --board-line: var(--color-border);
+  --board-line-strong: var(--color-border-strong);
 
-  --board-text: #f0edf4;
+  --board-text: var(--color-text);
   --board-text-soft: #c4bdc9;
   --board-text-muted: #7f7884;
   --board-text-faint: #5d5762;
 
-  --board-accent: #987cf2;
+  --board-accent: var(--color-accent);
   --board-accent-bright: #b9a4ff;
   --board-accent-soft: rgba(152, 124, 242, 0.1);
 
@@ -88,7 +88,7 @@
   margin: 0;
 
   font-family:
-    var(--font-serif),
+    var(--font-mind),
     Georgia,
     serif;
 
@@ -259,14 +259,14 @@
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.055);
+    var(--color-line-faint);
 
   border-radius: 14px;
 
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.012),
+      var(--color-surface-tint),
       rgba(255, 255, 255, 0.004)
     );
 
@@ -331,12 +331,12 @@
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.065);
+    var(--color-line-faint);
 
   border-radius: 999px;
 
   background:
-    rgba(255, 255, 255, 0.012);
+    var(--color-surface-tint);
 
   color: #67606c;
 
@@ -370,7 +370,7 @@
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.065);
+    var(--color-line-faint);
 
   border-radius: 10px;
 
@@ -573,7 +573,7 @@
       rgba(152, 124, 242, 0.05),
       transparent 35%
     ),
-    #111117;
+    var(--color-surface);
 
   box-shadow:
     0 32px 90px
@@ -668,10 +668,10 @@
 .board-modal-header h2 {
   margin: 0;
 
-  color: #f0ebf3;
+  color: var(--color-text);
 
   font-family:
-    var(--font-serif),
+    var(--font-mind),
     Georgia,
     serif;
 
@@ -719,7 +719,7 @@
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.08);
+    var(--color-border);
 
   border-radius: 8px;
 
@@ -731,7 +731,7 @@
   color: #d9d2de;
 
   font-family:
-    var(--font-inter),
+    var(--font-mind),
     Arial,
     sans-serif;
 
@@ -743,7 +743,7 @@
 }
 
 .board-add-form option {
-  background: #111117;
+  background: var(--color-surface);
   color: #d9d2de;
 }
 
@@ -893,7 +893,7 @@ button:last-child:hover:not(:disabled) {
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.07);
+    var(--color-border);
 
   border-radius: 10px;
 
