@@ -1527,7 +1527,7 @@ export default function ChatPage() {
                             {item.role
                             === "user"
                               ? "You"
-                              : "PROJECT"}
+                              : "MIND"}
                           </div>
 
                           <div className="chat-message-content">
@@ -1557,7 +1557,7 @@ export default function ChatPage() {
                     {isSending && (
                       <article className="chat-message is-assistant is-thinking">
                         <div className="chat-message-meta">
-                          PROJECT
+                          MIND
                         </div>
 
                         <div className="chat-thinking">

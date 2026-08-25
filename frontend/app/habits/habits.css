@@ -1,15 +1,15 @@
 .habits-page {
-  --habits-bg: #0b0b10;
-  --habits-surface: #101016;
-  --habits-line: rgba(255, 255, 255, 0.07);
-  --habits-line-strong: rgba(255, 255, 255, 0.11);
+  --habits-bg: var(--color-background);
+  --habits-surface: var(--color-surface);
+  --habits-line: var(--color-border);
+  --habits-line-strong: var(--color-border-strong);
 
-  --habits-text: #f0edf4;
+  --habits-text: var(--color-text);
   --habits-text-soft: #b8b1be;
   --habits-text-muted: #7d7682;
   --habits-text-faint: #5d5762;
 
-  --habits-accent: #987cf2;
+  --habits-accent: var(--color-accent);
   --habits-accent-bright: #b8a3ff;
   --habits-accent-soft: rgba(152, 124, 242, 0.1);
 
@@ -72,7 +72,7 @@
 
 .habits-heading h1 {
   margin: 0;
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-mind), Georgia, serif;
   font-size: 31px;
   font-weight: 500;
   line-height: 1;
@@ -157,7 +157,7 @@
 
 .habits-today strong {
   color: #c9c1ce;
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-mind), Georgia, serif;
   font-size: 21px;
   font-weight: 500;
   line-height: 1;
@@ -173,12 +173,12 @@
 .habit-row {
   padding: 30px 30px 27px;
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--color-line-faint);
   border-radius: 14px;
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.012),
+      var(--color-surface-tint),
       rgba(255, 255, 255, 0.005)
     );
   transition:
@@ -258,7 +258,7 @@
 .habit-main h2 {
   margin: 0;
   color: #ddd7e2;
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-mind), Georgia, serif;
   font-size: 23px;
   font-weight: 500;
   line-height: 1.08;
@@ -305,7 +305,7 @@
   align-items: baseline;
   gap: 4px;
   color: #aa97df;
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-mind), Georgia, serif;
   font-size: 22px;
   font-weight: 500;
   line-height: 1;
@@ -313,9 +313,9 @@
 
 .habit-streak span {
   color: #756d7b;
-  font-family: var(--font-inter), Arial, sans-serif;
+  font-family: var(--font-mind), Arial, sans-serif;
   font-size: 8px;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .habit-week {
@@ -349,7 +349,7 @@
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.085);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.012);
+  background: var(--color-surface-tint);
   color: transparent;
   font-size: 10px;
   font-style: normal;
@@ -544,7 +544,7 @@
 
 .habits-empty h2 {
   margin: 0 0 18px;
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-mind), Georgia, serif;
   font-size: 24px;
   font-weight: 500;
   letter-spacing: -0.03em;
@@ -593,7 +593,7 @@
       rgba(152, 124, 242, 0.05),
       transparent 32%
     ),
-    #111117;
+    var(--color-surface);
   box-shadow:
     0 32px 90px rgba(0, 0, 0, 0.5),
     0 0 40px rgba(87, 61, 170, 0.06);
@@ -649,8 +649,8 @@
 
 .habit-modal-header h2 {
   margin: 0;
-  color: #f0ebf3;
-  font-family: var(--font-serif), Georgia, serif;
+  color: var(--color-text);
+  font-family: var(--font-mind), Georgia, serif;
   font-size: 32px;
   font-weight: 500;
   line-height: 1;
@@ -684,7 +684,7 @@
   color: #4f4a53;
   font-size: 7px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0;
   text-transform: lowercase;
 }
@@ -693,12 +693,12 @@
   width: 100%;
   height: 42px;
   padding: 0 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   outline: none;
   background: rgba(255, 255, 255, 0.02);
   color: #dad4de;
-  font-family: var(--font-inter), Arial, sans-serif;
+  font-family: var(--font-mind), Arial, sans-serif;
   font-size: 10px;
 }
 
@@ -817,7 +817,7 @@
 
 .habit-detail-streak strong {
   color: #b3a1e8;
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-mind), Georgia, serif;
   font-size: 30px;
   font-weight: 500;
   line-height: 1;
@@ -864,7 +864,7 @@
 .habit-detail-today button {
   min-height: 35px;
   padding: 0 12px;
-  border: 1px solid rgba(255, 255, 255, 0.075);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.018);
   color: #77717d;
@@ -916,7 +916,7 @@
   padding: 26px 27px 23px;
   border: 1px solid var(--habits-line-strong);
   border-radius: 14px;
-  background: #111117;
+  background: var(--color-surface);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.44);
 }
 
@@ -931,7 +931,7 @@
 
 .habit-delete-dialog h2 {
   margin: 11px 0 0;
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-mind), Georgia, serif;
   font-size: 28px;
   font-weight: 500;
   line-height: 1;
@@ -954,7 +954,7 @@
 .habit-delete-dialog button {
   min-height: 35px;
   padding: 0 13px;
-  border: 1px solid rgba(255, 255, 255, 0.075);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   background: transparent;
   color: #817a85;

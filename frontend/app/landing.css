@@ -11,8 +11,8 @@
     display: flex;
     flex-direction: column;
 
-    background: #0c0c0f;
-    color: #f2eee8;
+    background: var(--color-background);
+    color: var(--color-text);
 
     isolation: isolate;
 }
@@ -32,7 +32,7 @@
             rgba(255, 255, 255, 0.04),
             transparent 44%
         ),
-        #0c0c0f;
+        var(--color-background);
 }
 
 .landing-background::before {
@@ -137,7 +137,7 @@
     color: rgba(218, 215, 211, 0.65);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -183,12 +183,12 @@
     margin: 0;
 
     font-family:
-        var(--font-serif),
+        var(--font-mind),
         "Times New Roman",
         Georgia,
         serif;
 
-    font-weight: 400;
+    font-weight: 500;
     line-height: 0.91;
     letter-spacing: -0.06em;
 
@@ -207,7 +207,7 @@
 }
 
 .landing-title-primary {
-    color: #f2eee8;
+    color: var(--color-text);
 
     font-size: clamp(76px, 7.2vw, 118px);
 }
@@ -232,7 +232,7 @@
     color: rgba(184, 181, 186, 0.48);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -281,7 +281,7 @@
     border-radius: 999px;
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
@@ -307,10 +307,10 @@
 }
 
 .landing-button-primary {
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--color-border);
 
     background: #8064ee;
-    color: #ffffff;
+    color: var(--color-on-accent);
 
     box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.02) inset,
@@ -326,7 +326,7 @@
 }
 
 .landing-button-secondary {
-    border: 1px solid rgba(255, 255, 255, 0.11);
+    border: 1px solid var(--color-border-strong);
 
     background: rgba(255, 255, 255, 0.01);
     color: rgba(241, 237, 232, 0.82);
@@ -335,8 +335,8 @@
 .landing-button-secondary:hover {
     border-color: rgba(255, 255, 255, 0.22);
 
-    background: rgba(255, 255, 255, 0.025);
-    color: #ffffff;
+    background: var(--color-surface-soft);
+    color: var(--color-on-accent);
 }
 
 .landing-button-arrow {
@@ -370,7 +370,7 @@
     color: rgba(174, 171, 177, 0.34);
 
     font-family:
-        var(--font-inter),
+        var(--font-mind),
         Arial,
         sans-serif;
 
