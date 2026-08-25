@@ -1,0 +1,526 @@
+.brain-page {
+    position: relative;
+
+    min-height: calc(100svh - 72px);
+
+    overflow: hidden;
+
+    background: #0c0c0f;
+    color: #f2eee8;
+
+    isolation: isolate;
+}
+
+.brain-page-background {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    background:
+        radial-gradient(
+            ellipse at 18% 8%,
+            rgba(126, 96, 237, 0.075),
+            transparent 43%
+        ),
+        #0c0c0f;
+}
+
+.brain-page-background::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    opacity: 0.035;
+
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.18) 0.6px,
+            transparent 0.75px
+        );
+    background-size: 25px 25px;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            black,
+            transparent 72%
+        );
+}
+
+.brain-shell {
+    position: relative;
+    z-index: 1;
+
+    width: min(1040px, calc(100% - 64px));
+
+    margin: 0 auto;
+    padding: 48px 0 88px;
+
+    animation:
+        brain-page-appear
+        520ms
+        cubic-bezier(0.22, 1, 0.36, 1)
+        both;
+}
+
+.brain-header {
+    min-height: 94px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 36px;
+
+    padding: 0 2px 30px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brain-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.brain-heading-mark,
+.brain-state-mark {
+    width: 8px;
+    height: 8px;
+
+    flex: 0 0 auto;
+
+    border: 1px solid rgba(174, 150, 255, 0.88);
+    border-radius: 50%;
+
+    background: rgba(132, 100, 241, 0.42);
+
+    box-shadow:
+        0 0 13px rgba(132, 100, 241, 0.3);
+}
+
+.brain-heading-mark {
+    margin-top: 10px;
+}
+
+.brain-heading h1 {
+    margin: 0;
+
+    color: rgba(244, 239, 233, 0.97);
+
+    font-family:
+        var(--font-serif),
+        "Times New Roman",
+        Georgia,
+        serif;
+
+    font-size: clamp(34px, 4vw, 46px);
+    font-weight: 400;
+
+    line-height: 0.9;
+    letter-spacing: -0.045em;
+}
+
+.brain-heading p {
+    max-width: 430px;
+
+    margin-top: 13px;
+
+    color: rgba(201, 196, 205, 0.55);
+
+    font-size: 12px;
+    line-height: 1.65;
+    letter-spacing: 0.015em;
+}
+
+.brain-sections {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.brain-section {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 58px;
+
+    padding: 34px 2px 38px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.brain-section:first-child {
+    border-top: 0;
+}
+
+.brain-section > header > span {
+    color: rgba(236, 230, 240, 0.86);
+
+    font-family:
+        var(--font-serif),
+        "Times New Roman",
+        Georgia,
+        serif;
+
+    font-size: 21px;
+    font-weight: 400;
+
+    letter-spacing: -0.025em;
+}
+
+.brain-section > header > p {
+    margin-top: 9px;
+
+    color: rgba(188, 183, 193, 0.42);
+
+    font-size: 10px;
+    line-height: 1.65;
+}
+
+.brain-section-content {
+    min-width: 0;
+}
+
+.brain-fields {
+    display: grid;
+    gap: 1px;
+
+    margin: 0;
+}
+
+.brain-field {
+    min-width: 0;
+
+    display: grid;
+    grid-template-columns: minmax(110px, 0.34fr) minmax(0, 1fr);
+    gap: 24px;
+
+    padding: 11px 13px;
+
+    border-radius: 8px;
+
+    transition: background-color 180ms ease;
+}
+
+.brain-field:hover {
+    background: rgba(255, 255, 255, 0.022);
+}
+
+.brain-field-nested {
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    padding-top: 17px;
+    padding-bottom: 17px;
+}
+
+.brain-field dt {
+    overflow-wrap: anywhere;
+
+    color: rgba(184, 178, 190, 0.48);
+
+    font-size: 10px;
+    font-weight: 500;
+
+    line-height: 1.5;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+}
+
+.brain-field dd {
+    min-width: 0;
+
+    margin: 0;
+}
+
+.brain-field-nested > dt {
+    color: rgba(207, 199, 217, 0.68);
+}
+
+.brain-field-nested > dd {
+    padding-left: 13px;
+
+    border-left: 1px solid rgba(134, 102, 239, 0.22);
+}
+
+.brain-scalar {
+    display: block;
+
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+
+    color: rgba(239, 234, 229, 0.84);
+
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.brain-summary,
+.brain-more,
+.brain-field-more dd {
+    color: rgba(184, 178, 190, 0.42);
+
+    font-size: 10px;
+    line-height: 1.5;
+    letter-spacing: 0.035em;
+}
+
+.brain-field-more {
+    padding-top: 8px;
+}
+
+.brain-array {
+    display: grid;
+    gap: 8px;
+}
+
+.brain-array-item {
+    min-width: 0;
+
+    padding: 11px 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.065);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.016);
+}
+
+.brain-array-item > .brain-fields > .brain-field {
+    padding-right: 4px;
+    padding-left: 4px;
+}
+
+.brain-more {
+    padding: 2px 4px 0;
+}
+
+.brain-loading {
+    display: grid;
+
+    padding-top: 8px;
+}
+
+.brain-loading-row {
+    min-height: 146px;
+
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 58px;
+
+    align-items: start;
+
+    padding: 35px 2px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+}
+
+.brain-loading-row > span,
+.brain-loading-row i {
+    display: block;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.055);
+
+    animation: brain-loading-pulse 1.6s ease-in-out infinite;
+}
+
+.brain-loading-row > span {
+    width: 92px;
+    height: 17px;
+}
+
+.brain-loading-row > div {
+    display: grid;
+    gap: 14px;
+}
+
+.brain-loading-row i {
+    width: min(100%, 480px);
+    height: 12px;
+}
+
+.brain-loading-row i:last-child {
+    width: min(72%, 340px);
+}
+
+.brain-error,
+.brain-empty {
+    min-height: 340px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 64px 24px;
+
+    text-align: center;
+}
+
+.brain-state-mark {
+    margin-bottom: 20px;
+}
+
+.brain-error h2,
+.brain-empty h2 {
+    color: rgba(241, 235, 231, 0.9);
+
+    font-family:
+        var(--font-serif),
+        "Times New Roman",
+        Georgia,
+        serif;
+
+    font-size: 25px;
+    font-weight: 400;
+
+    letter-spacing: -0.025em;
+}
+
+.brain-error p,
+.brain-empty p {
+    max-width: 440px;
+
+    margin-top: 10px;
+
+    color: rgba(191, 185, 195, 0.5);
+
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.brain-error button {
+    height: 36px;
+
+    margin-top: 22px;
+    padding: 0 17px;
+
+    border: 1px solid rgba(158, 132, 255, 0.34);
+    border-radius: 999px;
+
+    background: rgba(128, 96, 235, 0.14);
+    color: rgba(235, 228, 255, 0.94);
+
+    font-size: 11px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background-color 180ms ease;
+}
+
+.brain-error button:hover {
+    transform: translateY(-1px);
+
+    border-color: rgba(178, 156, 255, 0.55);
+
+    background: rgba(128, 96, 235, 0.22);
+}
+
+@keyframes brain-page-appear {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes brain-loading-pulse {
+    0%,
+    100% {
+        opacity: 0.55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 760px) {
+    .brain-page {
+        min-height: calc(100svh - 66px);
+    }
+
+    .brain-shell {
+        width: min(calc(100% - 36px), 1040px);
+
+        padding: 34px 0 64px;
+    }
+
+    .brain-header {
+        display: grid;
+        gap: 18px;
+
+        padding-bottom: 24px;
+    }
+
+    .brain-section,
+    .brain-loading-row {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .brain-section {
+        padding: 29px 2px 33px;
+    }
+
+    .brain-section > header > p {
+        max-width: 360px;
+    }
+
+    .brain-loading-row {
+        min-height: 178px;
+    }
+}
+
+@media (max-width: 520px) {
+    .brain-shell {
+        width: min(calc(100% - 28px), 1040px);
+    }
+
+    .brain-heading h1 {
+        font-size: 36px;
+    }
+
+    .brain-heading p {
+        max-width: 280px;
+    }
+
+    .brain-field {
+        grid-template-columns: 1fr;
+        gap: 6px;
+
+        padding-right: 6px;
+        padding-left: 6px;
+    }
+
+    .brain-field-nested {
+        gap: 11px;
+    }
+
+    .brain-field-nested > dd {
+        padding-left: 10px;
+    }
+
+    .brain-array-item {
+        padding: 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .brain-shell,
+    .brain-loading-row > span,
+    .brain-loading-row i,
+    .brain-field,
+    .brain-error button {
+        animation: none;
+        transition: none;
+    }
+}
