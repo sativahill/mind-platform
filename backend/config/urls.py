@@ -37,16 +37,6 @@ urlpatterns = [
 
     path('api/habits/', include("habits.urls")),
 
-    path('api/library/', include("library.urls")),
-
-    path('api/finance/', include("finance.urls")),
-
-    path('api/analytics/', include("analytics.urls")),
-
-    path('api/notifications/', include("notifications.urls")),
-
-    path('api/progress-photos/', include("progress_photos.urls")),
-
     path('api/register/', include("users.urls")),
     
     
