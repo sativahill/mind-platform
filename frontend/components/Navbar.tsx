@@ -23,6 +23,10 @@ const navigationItems: NavigationItem[] = [
     label: "Home",
   },
   {
+    href: "/brain",
+    label: "Brain",
+  },
+  {
     href: "/daily-log",
     label: "Daily Log",
   },
