@@ -32,6 +32,36 @@ Backend code exists for **Analytics**, **Finance**, **Library**, **Notifications
 - **AI:** Google Gemini through `google-genai`.
 - **Core concept:** Brain stores JSON memory updated by module integrations; AI Chats read Brain as user context.
 
+## Screenshots
+
+### Home
+
+![MIND Home](docs/screenshots/home-dark.png)
+
+### Brain
+
+![MIND Brain](docs/screenshots/brain-dark.png)
+
+### Daily Log
+
+![MIND Daily Log](docs/screenshots/daily-log-dark.png)
+
+### Goals
+
+![MIND Goals](docs/screenshots/goals-dark.png)
+
+### Board
+
+![MIND Board](docs/screenshots/board-dark.png)
+
+### AI Chat
+
+![MIND AI Chat](docs/screenshots/chat-dark.png)
+
+### Light theme
+
+![MIND Home in light theme](docs/screenshots/home-light.png)
+
 ## Repository structure
 
 ```text
